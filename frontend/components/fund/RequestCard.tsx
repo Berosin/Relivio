@@ -1,0 +1,202 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { ABIS } from "@/contracts/abis";
+import { formatRUSD, parseRUSD, statusLabel } from "@/lib/format";
+import { useTokenApproval } from "@/hooks/useTokenApproval";
+
+type RequestStruct = {
+  requester: `0x${string}`;
+  recipient: `0x${string}`;
+  amount: bigint;
+  reason: string;
+  repaymentPeriod: bigint;
+  status: number;
+  yesShares: bigint;
+  noShares: bigint;
+  votingDeadline: bigint;
+  createdAt: bigint;
+  releasedAt: bigint;
+  amountRepaid: bigint;
+  repaymentDeadline: bigint;
+};
+
+export function RequestCard({
+  fundAddress,
+  requestId,
+}: {
+  fundAddress: `0x${string}`;
+  requestId: number;
+}) {
+  const { address, isConnected } = useAccount();
+  const { data, refetch } = useReadContract({
+    address: fundAddress,
+    abi: ABIS.CommunityFund,
+    functionName: "getRequest",
+    args: [BigInt(requestId)],
+  });
+
+  const { writeContract, data: hash, isPending } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+  const [repayAmount, setRepayAmount] = useState("");
+  const repayApproval = useTokenApproval(fundAddress, parseRUSD(repayAmount || "0"));
+
+  const { data: myShares } = useReadContract({
+    address: fundAddress,
+    abi: ABIS.CommunityFund,
+    functionName: "fundSharesOf",
+    args: address ? [address] : undefined,
+    query: { enabled: Boolean(address) },
+  });
+  const { data: alreadyVoted } = useReadContract({
+    address: fundAddress,
+    abi: ABIS.CommunityFund,
+    functionName: "hasVoted",
+    args: address ? [BigInt(requestId), address] : undefined,
+    query: { enabled: Boolean(address) },
+  });
+
+  useEffect(() => {
+    if (isSuccess) refetch();
+  }, [isSuccess, refetch]);
+
+  if (!data) return null;
+  const r = data as unknown as RequestStruct;
+  const { requester, amount, reason, repaymentPeriod, status, yesShares, noShares, votingDeadline } = r;
+
+  const totalVotes = yesShares + noShares;
+  const yesPct = totalVotes > 0n ? Number((yesShares * 10000n) / totalVotes) / 100 : 0;
+  const votingOpen = Date.now() / 1000 < Number(votingDeadline) && status === 0;
+  const canFinalize = status === 0 && Date.now() / 1000 >= Number(votingDeadline);
+
+  const isOwnRequest = Boolean(address && requester.toLowerCase() === address.toLowerCase());
+  const isMember = Boolean(myShares && (myShares as bigint) > 0n);
+  const hasAlreadyVoted = Boolean(alreadyVoted);
+
+  let voteBlockedReason: string | null = null;
+  if (!isConnected) voteBlockedReason = "Connect your wallet to vote.";
+  else if (isOwnRequest) voteBlockedReason = "You can't vote on your own request.";
+  else if (hasAlreadyVoted) voteBlockedReason = "You've already voted on this request.";
+  else if (!isMember) voteBlockedReason = "Contribute to this fund to get voting power.";
+
+  return (
+    <div className="card">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="font-semibold">#{requestId} — {formatRUSD(amount)} RUSD</p>
+          <p className="text-sm text-neutral-400">{reason}</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            {repaymentPeriod > 0n ? "Emergency Assistance (repayable)" : "Emergency Assistance (donation-style)"}
+          </p>
+        </div>
+        <span className="rounded-full border border-neutral-700 px-2 py-1 text-xs">
+          {statusLabel(status, "request")}
+        </span>
+      </div>
+
+      {totalVotes > 0n && (
+        <div className="mt-3">
+          <div className="h-2 overflow-hidden rounded-full bg-neutral-800">
+            <div className="h-full bg-emerald-500" style={{ width: `${yesPct}%` }} />
+          </div>
+          <p className="mt-1 text-xs text-neutral-500">YES {yesPct.toFixed(0)}% / NO {(100 - yesPct).toFixed(0)}%</p>
+        </div>
+      )}
+
+      {votingOpen && (
+        <div className="mt-3">
+          {voteBlockedReason ? (
+            <p className="rounded-lg border border-neutral-700 bg-neutral-800/50 px-3 py-2 text-xs text-neutral-400">
+              {voteBlockedReason}
+            </p>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                disabled={isPending}
+                onClick={() =>
+                  writeContract({
+                    address: fundAddress,
+                    abi: ABIS.CommunityFund,
+                    functionName: "vote",
+                    args: [BigInt(requestId), true],
+                  })
+                }
+                className="flex-1 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-black hover:bg-emerald-400 disabled:opacity-50"
+              >
+                Vote YES
+              </button>
+              <button
+                disabled={isPending}
+                onClick={() =>
+                  writeContract({
+                    address: fundAddress,
+                    abi: ABIS.CommunityFund,
+                    functionName: "vote",
+                    args: [BigInt(requestId), false],
+                  })
+                }
+                className="flex-1 rounded-lg border border-neutral-700 px-3 py-2 text-sm font-semibold hover:bg-neutral-800 disabled:opacity-50"
+              >
+                Vote NO
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {canFinalize && (
+        <button
+          disabled={isPending}
+          onClick={() =>
+            writeContract({
+              address: fundAddress,
+              abi: ABIS.CommunityFund,
+              functionName: "finalizeRequest",
+              args: [BigInt(requestId)],
+            })
+          }
+          className="btn-primary mt-3 w-full"
+        >
+          Finalize Request
+        </button>
+      )}
+
+      {status === 4 && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="number"
+            placeholder="Repay amount"
+            className="input"
+            value={repayAmount}
+            onChange={(e) => setRepayAmount(e.target.value)}
+          />
+          {repayApproval.needsApproval && Number(repayAmount) > 0 ? (
+            <button
+              disabled={!isConnected || repayApproval.isPending || repayApproval.isConfirming}
+              onClick={repayApproval.approve}
+              className="btn-primary whitespace-nowrap"
+            >
+              Approve
+            </button>
+          ) : (
+            <button
+              disabled={!isConnected || isPending || isConfirming || Number(repayAmount) <= 0}
+              onClick={() =>
+                writeContract({
+                  address: fundAddress,
+                  abi: ABIS.CommunityFund,
+                  functionName: "repay",
+                  args: [BigInt(requestId), parseRUSD(repayAmount)],
+                })
+              }
+              className="btn-primary"
+            >
+              Repay
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

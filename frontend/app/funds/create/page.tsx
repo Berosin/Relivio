@@ -1,0 +1,175 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { ABIS } from "@/contracts/abis";
+import { ADDRESSES } from "@/lib/addresses";
+import { parseRUSD } from "@/lib/format";
+
+export default function CreateFundPage() {
+  const router = useRouter();
+  const { isConnected } = useAccount();
+  const { writeContract, data: hash, isPending, error } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+
+  const [form, setForm] = useState({
+    name: "Relivio Campus Emergency Fund",
+    description: "",
+    fundType: "CAMPUS_EMERGENCY",
+    minContribution: "10",
+    maxEmergencyRequest: "500",
+    votingDurationHours: "24",
+    votingThresholdPercent: "60",
+    emergencyReservePercent: "20",
+    defaultRepaymentDays: "90",
+  });
+
+  function update<K extends keyof typeof form>(key: K, value: string) {
+    setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function submit() {
+    if (!ADDRESSES.fundFactory) return;
+    const reserveBps = BigInt(Number(form.emergencyReservePercent) * 100);
+    writeContract({
+      address: ADDRESSES.fundFactory,
+      abi: ABIS.FundFactory,
+      functionName: "createFund",
+      args: [
+        {
+          name: form.name,
+          description: form.description,
+          fundType: form.fundType,
+          minContribution: parseRUSD(form.minContribution),
+          maxEmergencyRequest: parseRUSD(form.maxEmergencyRequest),
+          votingDuration: BigInt(Number(form.votingDurationHours) * 3600),
+          votingThresholdBps: BigInt(Number(form.votingThresholdPercent) * 100),
+          emergencyReserveBps: reserveBps,
+          defiAllocationBps: 10_000n - reserveBps,
+          defaultRepaymentPeriod: BigInt(Number(form.defaultRepaymentDays) * 86400),
+        },
+      ],
+    });
+  }
+
+ useEffect(() => {
+    if (isSuccess) {
+      const t = setTimeout(() => router.push("/funds"), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [isSuccess, router]);
+
+  return (
+    <div className="mx-auto max-w-xl px-6 py-12">
+      <h1 className="text-2xl font-bold">Create Community Emergency Fund</h1>
+      <p className="mt-1 text-sm text-neutral-400">
+        Deploys a new smart-contract-controlled treasury (Core Use Case 1).
+      </p>
+
+      <div className="mt-8 space-y-4">
+        <Field label="Fund name">
+          <input
+            className="input"
+            value={form.name}
+            onChange={(e) => update("name", e.target.value)}
+          />
+        </Field>
+        <Field label="Description">
+          <textarea
+            className="input"
+            rows={3}
+            value={form.description}
+            onChange={(e) => update("description", e.target.value)}
+          />
+        </Field>
+        <Field label="Fund type">
+          <input
+            className="input"
+            value={form.fundType}
+            onChange={(e) => update("fundType", e.target.value)}
+          />
+        </Field>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Minimum contribution (RUSD)">
+            <input
+              className="input"
+              type="number"
+              value={form.minContribution}
+              onChange={(e) => update("minContribution", e.target.value)}
+            />
+          </Field>
+          <Field label="Maximum emergency request (RUSD)">
+            <input
+              className="input"
+              type="number"
+              value={form.maxEmergencyRequest}
+              onChange={(e) => update("maxEmergencyRequest", e.target.value)}
+            />
+          </Field>
+          <Field label="Voting duration (hours)">
+            <input
+              className="input"
+              type="number"
+              value={form.votingDurationHours}
+              onChange={(e) => update("votingDurationHours", e.target.value)}
+            />
+          </Field>
+          <Field label="Approval threshold (%)">
+            <input
+              className="input"
+              type="number"
+              value={form.votingThresholdPercent}
+              onChange={(e) => update("votingThresholdPercent", e.target.value)}
+            />
+          </Field>
+          <Field label="Emergency reserve (%)">
+            <input
+              className="input"
+              type="number"
+              value={form.emergencyReservePercent}
+              onChange={(e) => update("emergencyReservePercent", e.target.value)}
+            />
+          </Field>
+          <Field label="Default repayment period (days)">
+            <input
+              className="input"
+              type="number"
+              value={form.defaultRepaymentDays}
+              onChange={(e) => update("defaultRepaymentDays", e.target.value)}
+            />
+          </Field>
+        </div>
+        <p className="text-xs text-neutral-500">
+          Remaining {100 - Number(form.emergencyReservePercent || 0)}% is allocated to the DeFi
+          yield engine (SIMULATED TESTNET YIELD).
+        </p>
+
+        <button
+          onClick={submit}
+          disabled={!isConnected || isPending || isConfirming}
+          className="w-full rounded-lg bg-emerald-500 px-4 py-3 font-semibold text-black hover:bg-emerald-400 disabled:opacity-50"
+        >
+          {!isConnected
+            ? "Connect wallet to continue"
+            : isPending
+            ? "Confirm in wallet..."
+            : isConfirming
+            ? "Deploying fund..."
+            : "Create Fund"}
+        </button>
+        {error && <p className="text-sm text-red-400">{error.message}</p>}
+        {isSuccess && <p className="text-sm text-emerald-400">Fund created! Redirecting...</p>}
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-xs font-medium text-neutral-400">{label}</span>
+      {children}
+    </label>
+  );
+}

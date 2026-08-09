@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+cache/
+lib/
+*.tsbuildinfo
+.env
+.env.local
+__pycache__/
