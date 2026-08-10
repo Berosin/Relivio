@@ -28,7 +28,7 @@ export function ConnectWallet() {
         )}
         <button
           onClick={() => disconnect()}
-          className="rounded-lg border border-neutral-700 px-4 py-2 text-sm font-medium hover:bg-neutral-800"
+            className="rounded-md border-2 border-black bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-black hover:text-white"
         >
           {shortAddress(address)}
         </button>
@@ -38,15 +38,12 @@ export function ConnectWallet() {
 
   if (connectors.length === 0) {
     return (
-      <span className="text-xs text-amber-400">
+      <span className="text-xs text-neutral-500">
         No wallet detected — install MetaMask
       </span>
     );
   }
 
-  // Only one connector is configured (see lib/wagmi.ts), so there's always
-  // exactly one button here — use a clean user-facing label instead of the
-  // raw connector name (e.g. "Injected").
   const connector = connectors[0];
 
   return (
@@ -54,11 +51,11 @@ export function ConnectWallet() {
       <button
         onClick={() => connect({ connector })}
         disabled={isPending}
-        className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-black hover:bg-emerald-400 disabled:opacity-50"
+        className="btn-shine rounded-md border-2 border-black bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
       >
         {isPending ? "Connecting..." : "Connect Wallet"}
       </button>
-      {error && <span className="text-xs text-red-400">{error.message}</span>}
+      {error && <span className="text-xs text-red-600">{error.message}</span>}
     </div>
   );
 }

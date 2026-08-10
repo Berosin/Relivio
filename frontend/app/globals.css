@@ -1,18 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --primary: #ededed;
-  --primary-foreground: #0a0a0a;
-  --secondary: #262626;
-  --secondary-foreground: #ededed;
-  --accent: #262626;
-  --accent-foreground: #ededed;
-  --destructive: #ef4444;
-  --border: #404040;
-  --input: #404040;
-  --ring: #737373;
+--background: #ffffff;
+--foreground: #000000;
+--primary: #000000;
+--primary-foreground: #ffffff;
+--secondary: #f5f5f5;
+--secondary-foreground: #000000;
+--accent: #f5f5f5;
+--accent-foreground: #000000;
+--border: #e5e5e5;
+--input: #d4d4d4;
+--ring: #000000;
 }
 
 @theme inline {
@@ -38,15 +37,26 @@ body {
 }
 
 @layer components {
+  /* Rectangular bordered fields on dark glass, sharp corners, white-on-focus */
   .input {
-    @apply w-full rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 outline-none focus:border-emerald-500;
+    @apply w-full rounded-md border-2 border-white/20 bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus:border-white;
   }
+
+  /* Rectangular, hard-bordered button that inverts on hover: white -> black */
   .btn-primary {
-    @apply rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-black hover:bg-emerald-400 disabled:opacity-50;
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-md border-2 border-white bg-white px-4 py-2 text-sm font-semibold text-black transition-colors duration-200 hover:bg-black hover:text-white disabled:opacity-40 disabled:pointer-events-none;
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
   }
+  .btn-primary:hover {
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+  }
+
+  /* Dark glassmorphism card, sharp-ish rounded rectangle, subtle white border */
   .card {
-    @apply rounded-xl border border-neutral-800 bg-neutral-900 p-5;
-  }
+.card {
+  @apply rounded-xl border border-white/10 bg-black p-5 text-white shadow-[0_2px_12px_rgba(0,0,0,0.12)] transition-shadow hover:border-white/20 hover:shadow-[0_6px_24px_rgba(0,0,0,0.2)];
+}  }
+
   .font-display {
     font-weight: 700;
     letter-spacing: -0.03em;
@@ -77,4 +87,38 @@ body {
 }
 .marquee {
   animation: marquee-scroll 30s linear infinite;
+}
+
+/* Cursor-follow glow — white on dark background */
+.cursor-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+    rgba(0, 0, 0, 0.05),
+    transparent 40%
+  );
+  transition: background 80ms linear;
+}
+
+/* Shine sweep on hover for bordered rectangular buttons */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+.btn-shine:hover::after {
+  left: 150%;
 }

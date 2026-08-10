@@ -63,7 +63,7 @@ export default function CreateFundPage() {
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
       <h1 className="text-2xl font-bold">Create Community Emergency Fund</h1>
-      <p className="mt-1 text-sm text-neutral-400">
+      <p className="mt-1 text-sm text-neutral-600">
         Deploys a new smart-contract-controlled treasury (Core Use Case 1).
       </p>
 
@@ -140,7 +140,7 @@ export default function CreateFundPage() {
             />
           </Field>
         </div>
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-neutral-600">
           Remaining {100 - Number(form.emergencyReservePercent || 0)}% is allocated to the DeFi
           yield engine (SIMULATED TESTNET YIELD).
         </p>
@@ -168,7 +168,7 @@ export default function CreateFundPage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-neutral-400">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-neutral-600">{label}</span>
       {children}
     </label>
   );

@@ -35,20 +35,21 @@ export default function FundsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Emergency Assistance Funds</h1>
-          <p className="mt-1 text-sm text-neutral-400">
+          <p className="mt-1 text-sm text-neutral-600">
             Community-owned treasuries for individual emergency assistance.
           </p>
         </div>
         <Link
           href="/funds/create"
-          className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-black hover:bg-emerald-400"
+          className="btn-shine rounded-md border-2 border-black bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+
         >
           + Create Fund
         </Link>
       </div>
 
       {!ADDRESSES.fundFactory && (
-        <p className="mt-8 text-sm text-amber-400">
+        <p className="mt-8 text-sm text-neutral-600">
           Set NEXT_PUBLIC_FUND_FACTORY_ADDRESS in frontend/.env.local to load funds.
         </p>
       )}
@@ -60,7 +61,7 @@ export default function FundsPage() {
       </div>
 
       {ADDRESSES.fundFactory && total === 0 && (
-        <p className="mt-8 text-sm text-neutral-500">
+        <p className="mt-8 text-sm text-neutral-600">
           No funds created yet. Be the first to create one.
         </p>
       )}
@@ -87,12 +88,11 @@ function FundCard({ address }: { address: `0x${string}` }) {
   return (
     <Link
       href={`/funds/${address}`}
-      className="rounded-xl border border-neutral-800 bg-neutral-900 p-5 hover:border-emerald-500/50"
-    >
+className="rounded-xl border-2 border-black bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:border-emerald-500"    >
       <h3 className="font-semibold">{name}</h3>
-      <p className="mt-2 text-xs text-neutral-500">Treasury</p>
+      <p className="mt-2 text-xs text-neutral-600">Treasury</p>
       <p className="text-lg font-bold text-emerald-400">{formatRUSD(totalTreasury)} RUSD</p>
-      <p className="mt-1 text-xs text-neutral-500">
+      <p className="mt-1 text-xs text-neutral-600">
         {contributors !== undefined ? contributors.toString() : "—"} contributors
       </p>
     </Link>

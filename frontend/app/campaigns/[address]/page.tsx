@@ -64,7 +64,7 @@ export default function CampaignDetailPage({
           <span className="rounded-full bg-sky-500/20 px-2 py-0.5 text-xs text-sky-400">Verified</span>
         )}
       </div>
-      <p className="mt-1 text-sm text-neutral-400">{descriptionStr}</p>
+      <p className="mt-1 text-sm text-neutral-600">{descriptionStr}</p>
       <p className="mt-1 text-xs text-neutral-600">{address}</p>
 
       <div className="mt-6">
@@ -92,7 +92,7 @@ export default function CampaignDetailPage({
             {isOrganizer && (
               <AddMilestonePanel campaignAddress={address} onDone={() => {}} />
             )}
-            {count === 0 && <p className="text-sm text-neutral-500">No milestones yet.</p>}
+            {count === 0 && <p className="text-sm text-neutral-600">No milestones yet.</p>}
             {Array.from({ length: count }, (_, i) => i).map((id) => (
               <MilestoneCard
                 key={id}

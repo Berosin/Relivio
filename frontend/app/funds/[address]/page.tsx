@@ -41,7 +41,7 @@ export default function FundDetailPage({
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <h1 className="text-2xl font-bold">{name}</h1>
-      <p className="mt-1 text-sm text-neutral-400">{description}</p>
+      <p className="mt-1 text-sm text-neutral-600">{description}</p>
       <p className="mt-1 text-xs text-neutral-600">{address}</p>
 
       <div className="mt-6">
@@ -54,7 +54,7 @@ export default function FundDetailPage({
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium ${
-              tab === t ? "border-b-2 border-emerald-500 text-white" : "text-neutral-500"
+              tab === t ? "border-b-2 border-emerald-500 text-white" : "text-neutral-600"
             }`}
           >
             {t === "requests" ? "Emergency Requests" : t === "contribute" ? "Contribute" : "Request Help"}
@@ -72,7 +72,7 @@ export default function FundDetailPage({
         {tab === "requests" && (
           <div className="space-y-4">
             {count === 0 && (
-              <p className="text-sm text-neutral-500">No requests yet.</p>
+              <p className="text-sm text-neutral-600">No requests yet.</p>
             )}
             {Array.from({ length: count }, (_, i) => count - 1 - i).map((id) => (
               <RequestCard key={id} fundAddress={address} requestId={id} />

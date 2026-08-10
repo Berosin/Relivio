@@ -115,14 +115,14 @@ export function MilestoneCard({
           <p className="font-semibold">#{milestoneId} — {description}</p>
           <p className="text-sm text-neutral-400">{formatRUSD(amountVal)} RUSD</p>
         </div>
-        <span className="rounded-full border border-neutral-700 px-2 py-1 text-xs">
+        <span className="rounded-full border border-white/15 bg-white/10 px-2 py-1 text-xs text-white">
           {statusLabel(statusVal, "milestone")}
         </span>
       </div>
 
       {totalVotes > 0n && (
         <div className="mt-3">
-          <div className="h-2 overflow-hidden rounded-full bg-neutral-800">
+          <div className="h-2 overflow-hidden rounded-full bg-white/10">
             <div className="h-full bg-sky-500" style={{ width: `${yesPct}%` }} />
           </div>
           <p className="mt-1 text-xs text-neutral-500">
@@ -154,7 +154,7 @@ export function MilestoneCard({
       {votingOpen && (
         <div className="mt-3">
           {voteBlockedReason ? (
-            <p className="rounded-lg border border-neutral-700 bg-neutral-800/50 px-3 py-2 text-xs text-neutral-400">
+            <p className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-neutral-400">
               {voteBlockedReason}
             </p>
           ) : (
@@ -183,7 +183,7 @@ export function MilestoneCard({
                     args: [BigInt(milestoneId), false],
                   })
                 }
-                className="flex-1 rounded-lg border border-neutral-700 px-3 py-2 text-sm font-semibold hover:bg-neutral-800 disabled:opacity-50"
+                className="flex-1 rounded-lg border-2 border-white px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
               >
                 Vote NO
               </button>
