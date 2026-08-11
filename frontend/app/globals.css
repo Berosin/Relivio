@@ -39,8 +39,11 @@ body {
 @layer components {
   /* Rectangular bordered fields on dark glass, sharp corners, white-on-focus */
   .input {
-    @apply w-full rounded-md border-2 border-white/20 bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus:border-white;
-  }
+  @apply w-full rounded-lg border-2 border-black/15 bg-white/80 px-3.5 py-2.5 text-sm text-black outline-none backdrop-blur-xl transition-all duration-150 placeholder:text-neutral-400 focus:border-black focus:bg-white;
+}
+.input:focus {
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+}
 
   /* Rectangular, hard-bordered button that inverts on hover: white -> black */
   .btn-primary {

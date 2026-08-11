@@ -88,10 +88,10 @@ function FundCard({ address }: { address: `0x${string}` }) {
   return (
     <Link
       href={`/funds/${address}`}
-className="rounded-xl border-2 border-black bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:border-emerald-500"    >
+className="rounded-xl border-2 border-black bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:border-white/40"    >
       <h3 className="font-semibold">{name}</h3>
       <p className="mt-2 text-xs text-neutral-600">Treasury</p>
-      <p className="text-lg font-bold text-emerald-400">{formatRUSD(totalTreasury)} RUSD</p>
+      <p className="text-lg font-bold text-white">{formatRUSD(totalTreasury)} RUSD</p>
       <p className="mt-1 text-xs text-neutral-600">
         {contributors !== undefined ? contributors.toString() : "—"} contributors
       </p>

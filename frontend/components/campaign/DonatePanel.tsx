@@ -54,7 +54,7 @@ useEffect(() => {
         <button
           onClick={approval.approve}
           disabled={!isConnected || approval.isPending || approval.isConfirming}
-          className="mt-3 w-full rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-black hover:bg-sky-400 disabled:opacity-50"
+          className="mt-3 w-full rounded-lg border-2 border-white bg-white px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
         >
           {approval.isPending || approval.isConfirming ? "Approving..." : "1. Approve RUSD"}
         </button>
@@ -62,7 +62,7 @@ useEffect(() => {
         <button
           onClick={donate}
           disabled={!isConnected || isPending || isConfirming}
-          className="mt-3 w-full rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-black hover:bg-sky-400 disabled:opacity-50"
+          className="mt-3 w-full rounded-lg border-2 border-white bg-white px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
         >
           {isPending ? "Confirm in wallet..." : isConfirming ? "Donating..." : "2. Donate"}
         </button>

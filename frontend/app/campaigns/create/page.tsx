@@ -25,7 +25,7 @@ export default function CreateCampaignPage() {
 
   const [form, setForm] = useState({
     name: "",
-    campaignType: 1, // DISASTER_RELIEF
+    campaignType: 1,
     description: "",
     beneficiaryInfo: "",
     fundingTarget: "100000",
@@ -69,22 +69,33 @@ export default function CreateCampaignPage() {
       return () => clearTimeout(t);
     }
   }, [isSuccess, router]);
-  
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!e.currentTarget.checkValidity()) {
+      e.currentTarget.reportValidity();
+      return;
+    }
+    submit();
+  }
+
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
+      <div className="rounded-2xl border-2 border-black bg-black p-8 text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
       <h1 className="text-2xl font-bold">Create Relief Campaign</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+      <p className="mt-1 text-sm text-neutral-400">
         Public campaign for disaster or community relief (Core Use Case 2). Verification is
         performed separately by the platform verifier.
       </p>
 
-      <div className="mt-8 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <Field label="Campaign name">
-          <input className="input" value={form.name} onChange={(e) => update("name", e.target.value)} />
+          <input className="input" required value={form.name} onChange={(e) => update("name", e.target.value)} />
         </Field>
         <Field label="Campaign type">
           <select
             className="input"
+            required
             value={form.campaignType}
             onChange={(e) => update("campaignType", Number(e.target.value))}
           >
@@ -99,6 +110,7 @@ export default function CreateCampaignPage() {
           <textarea
             className="input"
             rows={3}
+            required
             value={form.description}
             onChange={(e) => update("description", e.target.value)}
           />
@@ -106,6 +118,7 @@ export default function CreateCampaignPage() {
         <Field label="Beneficiary info (org/coalition, no personal PII)">
           <input
             className="input"
+            required
             value={form.beneficiaryInfo}
             onChange={(e) => update("beneficiaryInfo", e.target.value)}
           />
@@ -115,6 +128,9 @@ export default function CreateCampaignPage() {
             <input
               className="input"
               type="number"
+              min="0.000001"
+              step="any"
+              required
               value={form.fundingTarget}
               onChange={(e) => update("fundingTarget", e.target.value)}
             />
@@ -123,6 +139,8 @@ export default function CreateCampaignPage() {
             <input
               className="input"
               type="number"
+              min="1"
+              required
               value={form.deadlineDays}
               onChange={(e) => update("deadlineDays", e.target.value)}
             />
@@ -131,6 +149,9 @@ export default function CreateCampaignPage() {
             <input
               className="input"
               type="number"
+              min="0"
+              max="100"
+              required
               value={form.emergencyReservePercent}
               onChange={(e) => update("emergencyReservePercent", e.target.value)}
             />
@@ -139,6 +160,9 @@ export default function CreateCampaignPage() {
             <input
               className="input"
               type="number"
+              min="1"
+              max="100"
+              required
               value={form.votingThresholdPercent}
               onChange={(e) => update("votingThresholdPercent", e.target.value)}
             />
@@ -147,21 +171,23 @@ export default function CreateCampaignPage() {
             <input
               className="input"
               type="number"
+              min="0.01"
+              step="any"
+              required
               value={form.votingDurationHours}
               onChange={(e) => update("votingDurationHours", e.target.value)}
             />
           </Field>
         </div>
-        <p className="text-xs text-neutral-600">
+        <p className="text-xs text-neutral-500">
           Remaining {100 - Number(form.emergencyReservePercent || 0)}% goes to the DeFi yield
           engine (SIMULATED TESTNET YIELD).
         </p>
 
         <button
-          onClick={submit}
+          type="submit"
           disabled={!isConnected || isPending || isConfirming}
-          className="w-full rounded-lg bg-sky-500 px-4 py-3 font-semibold text-black hover:bg-sky-400 disabled:opacity-50"
-        >
+          className="btn-shine w-full rounded-md border-2 border-white bg-white px-4 py-3 font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"        >
           {!isConnected
             ? "Connect wallet to continue"
             : isPending
@@ -170,8 +196,9 @@ export default function CreateCampaignPage() {
             ? "Deploying campaign..."
             : "Create Campaign"}
         </button>
-        {error && <p className="text-sm text-red-400">{error.message}</p>}
-        {isSuccess && <p className="text-sm text-sky-400">Campaign created! Redirecting...</p>}
+        {error && <p className="text-sm text-red-600">{error.message}</p>}
+        {isSuccess && <p className="text-sm font-medium text-white">Campaign created! Redirecting...</p>}
+      </form>
       </div>
     </div>
   );

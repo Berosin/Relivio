@@ -123,7 +123,7 @@ export function MilestoneCard({
       {totalVotes > 0n && (
         <div className="mt-3">
           <div className="h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full bg-sky-500" style={{ width: `${yesPct}%` }} />
+            <div className="h-full bg-white" style={{ width: `${yesPct}%` }} />
           </div>
           <p className="mt-1 text-xs text-neutral-500">
             YES {yesPct.toFixed(0)}% / NO {(100 - yesPct).toFixed(0)}%
@@ -144,7 +144,7 @@ export function MilestoneCard({
                 args: [BigInt(milestoneId)],
               })
             }
-            className="mt-3 w-full rounded-lg bg-sky-500 px-3 py-2 text-sm font-semibold text-black hover:bg-sky-400 disabled:opacity-50"
+                className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
           >
             Propose Release
           </button>
@@ -183,7 +183,7 @@ export function MilestoneCard({
                     args: [BigInt(milestoneId), false],
                   })
                 }
-                className="flex-1 rounded-lg border-2 border-white px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
+                className="flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
               >
                 Vote NO
               </button>

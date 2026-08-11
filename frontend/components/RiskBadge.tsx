@@ -1,7 +1,7 @@
 import type { RiskAssessment } from "@/lib/aiRisk";
 
 const LEVEL_STYLES: Record<RiskAssessment["risk_level"], string> = {
-  LOW: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
+  LOW: "bg-white/5 border-white/20 text-white",
   MEDIUM: "bg-amber-500/10 border-amber-500/30 text-amber-400",
   HIGH: "bg-red-500/10 border-red-500/30 text-red-400",
 };

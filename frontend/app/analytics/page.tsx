@@ -129,7 +129,7 @@ export default function AnalyticsPage() {
             {
               label: "Total Simulated Yield Pending",
               value: `+${formatRUSD(totalSimulatedYield)} RUSD`,
-              accent: "text-emerald-400",
+              accent: "text-white",
             },
           ]}
         />
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
                 contentStyle={{ background: "#171717", border: "1px solid #404040", fontSize: 12 }}
                 formatter={(value) => [`${Number(value).toLocaleString()} RUSD`, "Amount"]}
               />
-              <Bar dataKey="treasury" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="treasury" fill="#ffffff" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

@@ -54,7 +54,8 @@ export default function FundDetailPage({
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium ${
-              tab === t ? "border-b-2 border-emerald-500 text-white" : "text-neutral-600"
+              // active tab underline:
+              tab === t ? "border-b-2 border-black text-black" : "text-neutral-500"   
             }`}
           >
             {t === "requests" ? "Emergency Requests" : t === "contribute" ? "Contribute" : "Request Help"}

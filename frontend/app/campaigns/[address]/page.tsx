@@ -47,7 +47,7 @@ export default function CampaignDetailPage({
         { label: "Distributed", value: `${formatRUSD(distributed)} RUSD` },
         { label: "Remaining", value: `${formatRUSD(remaining)} RUSD` },
         { label: "DeFi Allocation", value: `${formatRUSD(defiPrincipal)} RUSD` },
-        { label: "Simulated Yield", value: `+${formatRUSD(pendingYield)} RUSD`, accent: "text-emerald-400" },
+        { label: "Simulated Yield", value: `+${formatRUSD(pendingYield)} RUSD`, accent: "text-white" },
         { label: "Contributors", value: (contributors ?? 0n).toString() },
       ]
     : [];
@@ -61,7 +61,8 @@ export default function CampaignDetailPage({
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold">{nameStr}</h1>
         {Boolean(verified) && (
-          <span className="rounded-full bg-sky-500/20 px-2 py-0.5 text-xs text-sky-400">Verified</span>
+          <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">Verified</span>
+
         )}
       </div>
       <p className="mt-1 text-sm text-neutral-600">{descriptionStr}</p>
@@ -77,8 +78,7 @@ export default function CampaignDetailPage({
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium ${
-              tab === t ? "border-b-2 border-sky-500 text-white" : "text-neutral-500"
-            }`}
+                tab === t ? "border-b-2 border-black text-black" : "text-neutral-500"            }`}
           >
             {t === "milestones" ? "Milestones" : "Donate"}
           </button>

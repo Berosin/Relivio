@@ -30,7 +30,7 @@ export function treasuryStats(snapshot: readonly bigint[] | undefined) {
     {
       label: "Simulated Yield",
       value: `+${formatRUSD(pendingYield)} RUSD`,
-      accent: "text-emerald-400",
+      accent: "text-white",
     },
     { label: "Contributors", value: contributors.toString() },
   ];

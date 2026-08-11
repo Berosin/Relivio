@@ -42,7 +42,7 @@ export default function CampaignsPage() {
         </div>
         <Link
           href="/campaigns/create"
-className="btn-shine rounded-md border-2 border-black bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+className="btn-shine rounded-md border-2 border-black bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/40 hover:text-black"
         >
           + Create Campaign
         </Link>
@@ -92,20 +92,21 @@ function CampaignCard({ address }: { address: `0x${string}` }) {
   return (
     <Link
       href={`/campaigns/${address}`}
-className="rounded-xl border-2 border-black bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:border-sky-500"
+className="rounded-xl border-2 border-black bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:border-white/40"
     >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">{(name as string | undefined) ?? "Loading..."}</h3>
         {Boolean(verified) && (
-          <span className="rounded-full bg-sky-500/20 px-2 py-0.5 text-xs text-sky-400">Verified</span>
+          <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">Verified</span>
+
         )}
       </div>
-      <p className="mt-3 text-lg font-bold text-sky-400">
+      <p className="mt-3 text-lg font-bold text-white">
         {formatRUSD(raised)} / {formatRUSD(target)} RUSD
       </p>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-neutral-800">
         <div
-          className="h-full bg-sky-500"
+          className="h-full bg-white"
           style={{ width: `${progressBps ? Number(progressBps) / 100 : 0}%` }}
         />
       </div>

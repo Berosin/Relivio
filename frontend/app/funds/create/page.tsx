@@ -53,24 +53,35 @@ export default function CreateFundPage() {
     });
   }
 
- useEffect(() => {
+  useEffect(() => {
     if (isSuccess) {
       const t = setTimeout(() => router.push("/funds"), 1200);
       return () => clearTimeout(t);
     }
   }, [isSuccess, router]);
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!e.currentTarget.checkValidity()) {
+      e.currentTarget.reportValidity();
+      return;
+    }
+    submit();
+  }
+
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
+      <div className="rounded-2xl border-2 border-black bg-black p-8 text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
       <h1 className="text-2xl font-bold">Create Community Emergency Fund</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+      <p className="mt-1 text-sm text-neutral-400">
         Deploys a new smart-contract-controlled treasury (Core Use Case 1).
       </p>
 
-      <div className="mt-8 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <Field label="Fund name">
           <input
             className="input"
+            required
             value={form.name}
             onChange={(e) => update("name", e.target.value)}
           />
@@ -79,6 +90,7 @@ export default function CreateFundPage() {
           <textarea
             className="input"
             rows={3}
+            required
             value={form.description}
             onChange={(e) => update("description", e.target.value)}
           />
@@ -86,6 +98,7 @@ export default function CreateFundPage() {
         <Field label="Fund type">
           <input
             className="input"
+            required
             value={form.fundType}
             onChange={(e) => update("fundType", e.target.value)}
           />
@@ -95,6 +108,9 @@ export default function CreateFundPage() {
             <input
               className="input"
               type="number"
+              min="0.000001"
+              step="any"
+              required
               value={form.minContribution}
               onChange={(e) => update("minContribution", e.target.value)}
             />
@@ -103,6 +119,9 @@ export default function CreateFundPage() {
             <input
               className="input"
               type="number"
+              min="0.000001"
+              step="any"
+              required
               value={form.maxEmergencyRequest}
               onChange={(e) => update("maxEmergencyRequest", e.target.value)}
             />
@@ -111,6 +130,9 @@ export default function CreateFundPage() {
             <input
               className="input"
               type="number"
+              min="0.01"
+              step="any"
+              required
               value={form.votingDurationHours}
               onChange={(e) => update("votingDurationHours", e.target.value)}
             />
@@ -119,6 +141,9 @@ export default function CreateFundPage() {
             <input
               className="input"
               type="number"
+              min="1"
+              max="100"
+              required
               value={form.votingThresholdPercent}
               onChange={(e) => update("votingThresholdPercent", e.target.value)}
             />
@@ -127,6 +152,9 @@ export default function CreateFundPage() {
             <input
               className="input"
               type="number"
+              min="0"
+              max="100"
+              required
               value={form.emergencyReservePercent}
               onChange={(e) => update("emergencyReservePercent", e.target.value)}
             />
@@ -135,21 +163,22 @@ export default function CreateFundPage() {
             <input
               className="input"
               type="number"
+              min="0"
+              required
               value={form.defaultRepaymentDays}
               onChange={(e) => update("defaultRepaymentDays", e.target.value)}
             />
           </Field>
         </div>
-        <p className="text-xs text-neutral-600">
+        <p className="text-xs text-neutral-500">
           Remaining {100 - Number(form.emergencyReservePercent || 0)}% is allocated to the DeFi
           yield engine (SIMULATED TESTNET YIELD).
         </p>
 
         <button
-          onClick={submit}
+          type="submit"
           disabled={!isConnected || isPending || isConfirming}
-          className="w-full rounded-lg bg-emerald-500 px-4 py-3 font-semibold text-black hover:bg-emerald-400 disabled:opacity-50"
-        >
+          className="btn-shine w-full rounded-md border-2 border-white bg-white px-4 py-3 font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"         >
           {!isConnected
             ? "Connect wallet to continue"
             : isPending
@@ -158,8 +187,8 @@ export default function CreateFundPage() {
             ? "Deploying fund..."
             : "Create Fund"}
         </button>
-        {error && <p className="text-sm text-red-400">{error.message}</p>}
-        {isSuccess && <p className="text-sm text-emerald-400">Fund created! Redirecting...</p>}
+        {error && <p className="text-sm text-red-600">{error.message}</p>}
+        {isSuccess && <p className="text-sm font-medium text-white">Fund created! Redirecting...</p>}      </form>
       </div>
     </div>
   );
@@ -168,7 +197,7 @@ export default function CreateFundPage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-neutral-600">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-neutral-400">{label}</span>
       {children}
     </label>
   );
