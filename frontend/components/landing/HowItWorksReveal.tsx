@@ -82,33 +82,51 @@ export function HowItWorksReveal() {
         inView ? "in-view" : ""
       }`}
     >
-      {STEPS.map((step, i) => (
-        <div
-          key={step.headline}
-          className="relative flex-1 overflow-hidden border-r border-white/10 last:border-r-0"
-        >
+      {STEPS.map((step, i) => {
+        return (
           <div
-            className={`reveal-block flex h-full w-full flex-col justify-end p-6 sm:p-8 ${
-              step.dark ? "bg-black text-white" : "bg-white text-black"
-            }`}
-            style={{ transitionDelay: `${delayFor(i, STEPS.length)}s` }}
+            key={step.headline}
+            className="relative flex-1 overflow-hidden border-r border-white/10 last:border-r-0"
           >
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">
-              {step.eyebrow}
-            </span>
-            <h3 className="mt-3 text-xl font-display leading-snug sm:text-2xl">
-              {step.headline}
-            </h3>
-            <p
-              className={`mt-3 text-sm leading-relaxed ${
-                step.dark ? "text-neutral-400" : "text-neutral-600"
+            <div
+              className={`reveal-block flex h-full w-full flex-col justify-between p-6 sm:p-8 ${
+                step.dark ? "bg-black text-white" : "bg-white text-black"
               }`}
+              style={{ transitionDelay: `${delayFor(i, STEPS.length)}s` }}
             >
-              {step.detail}
-            </p>
+              {/* Top: oversized ghost step number — fills the space above
+                  the bottom-anchored copy with something on-theme rather
+                  than leaving it empty. */}
+              <div className="relative flex flex-1 items-start justify-center overflow-hidden pt-4">
+                <span
+                  className={`select-none font-display text-[10rem] leading-none sm:text-[13rem] ${
+                    step.dark ? "text-white/10" : "text-black/10"
+                  }`}
+                >
+                  {step.eyebrow.slice(0, 2)}
+                </span>
+              </div>
+
+              {/* Bottom: the actual copy */}
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">
+                  {step.eyebrow}
+                </span>
+                <h3 className="mt-3 text-xl font-display leading-snug sm:text-2xl">
+                  {step.headline}
+                </h3>
+                <p
+                  className={`mt-3 text-sm leading-relaxed ${
+                    step.dark ? "text-neutral-400" : "text-neutral-600"
+                  }`}
+                >
+                  {step.detail}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* Center headline — fades/slides in only after the center block settles */}
       <div
