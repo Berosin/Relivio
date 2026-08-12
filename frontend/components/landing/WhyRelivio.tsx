@@ -53,22 +53,22 @@ export function WhyRelivio() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const idx = Number((entry.target as HTMLElement).dataset.index);
-          if (entry.isIntersecting) {
-            setInView((prev) => {
-              if (prev[idx]) return prev;
-              const next = [...prev];
-              next[idx] = true;
-              return next;
-            });
-            setActiveIndex(idx);
-          }
-        });
-      },
-      { threshold: 0.45 }
-    );
+  (entries) => {
+    entries.forEach((entry) => {
+      const idx = Number((entry.target as HTMLElement).dataset.index);
+      setInView((prev) => {
+        if (prev[idx] === entry.isIntersecting) return prev;
+        const next = [...prev];
+        next[idx] = entry.isIntersecting;
+        return next;
+      });
+      if (entry.isIntersecting) {
+        setActiveIndex(idx);
+      }
+    });
+  },
+  { threshold: 0.45 }
+);
 
     rowRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
