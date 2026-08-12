@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { AsciiPhotoEffect } from "./AsciiPhotoEffect";
+import { HeroMoneyBackground } from "./HeroMoneyBackground";
 
 const words = ["assist", "protect", "fund", "rebuild"];
 
@@ -25,28 +25,11 @@ export function HeroSection() {
 
   return (
     <section className="relative overflow-hidden bg-black">
-      {/* Animated ASCII/dither effect, monochrome-tinted to match the
-          black & white theme (overrides the engine's default green tint). */}
-      <div className="pointer-events-none absolute right-0 top-1/2 h-[600px] w-[600px] -translate-y-1/2 opacity-80 lg:h-[900px] lg:w-[900px]">
-        <AsciiPhotoEffect
-          className="h-full w-full"
-          config={{
-            tint: "#ffffff",
-            tintOpacity: 8,
-            pfx: {
-              vignette: { enabled: true, intensity: 45 },
-              scanLines: { enabled: true, intensity: 25 },
-              chromatic: { enabled: true, intensity: 25 },
-              bloom: { enabled: true, intensity: 50 },
-              filmGrain: { enabled: true, intensity: 35 },
-              glitch: { enabled: true, intensity: 15 },
-              pixelate: { enabled: false, intensity: 0 },
-              halftone: { enabled: false, intensity: 0 },
-              filmDust: { enabled: false, intensity: 0 },
-            },
-          }}
-        />
-      </div>
+      {/* Animated 3D CRT banknote background, monochrome-tinted to match
+    the black & white theme (was a green CRT phosphor look). */}
+<div className="pointer-events-none absolute right-0 top-0 h-full w-full max-w-[900px] lg:max-w-[1200px]">
+  <HeroMoneyBackground className="h-full w-full" />
+</div>
 
       {/* Subtle grid lines */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-20">
