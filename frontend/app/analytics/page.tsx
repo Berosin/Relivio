@@ -106,7 +106,7 @@ export default function AnalyticsPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
       <h1 className="text-2xl font-bold">Platform Analytics</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+      <p className="mt-1 text-sm text-neutral-400">
         Aggregated, on-chain figures across every Relivio fund and campaign. No off-chain data
         involved — every number here is read directly from the contracts.
       </p>
@@ -154,7 +154,7 @@ export default function AnalyticsPage() {
       )}
 
       {chartData.length === 0 && (
-        <p className="mt-8 text-sm text-neutral-600">
+        <p className="mt-8 text-sm text-neutral-400">
           No funds or campaigns deployed yet — analytics will populate once activity starts.
         </p>
       )}

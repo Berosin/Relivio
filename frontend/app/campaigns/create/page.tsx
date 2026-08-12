@@ -81,7 +81,7 @@ export default function CreateCampaignPage() {
 
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
-      <div className="rounded-2xl border-2 border-black bg-black p-8 text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
+      <div className="rounded-2xl border-2 border-white/15 bg-black p-8 text-white shadow-[0_8px_30px_rgba(255,255,255,0.05)]">
       <h1 className="text-2xl font-bold">Create Relief Campaign</h1>
       <p className="mt-1 text-sm text-neutral-400">
         Public campaign for disaster or community relief (Core Use Case 2). Verification is

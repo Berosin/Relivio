@@ -12,7 +12,7 @@ export default function Home() {
 
       <div className="mx-auto max-w-6xl px-6 py-24">
         <div className="grid gap-6 sm:grid-cols-2">
-          <div className="rounded-2xl border-2 border-black bg-black p-8 text-white transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
+          <div className="rounded-2xl border-2 border-white/15 bg-black p-8 text-white transition-shadow hover:border-white/30 hover:shadow-[0_8px_30px_rgba(255,255,255,0.06)]">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
               Core Use Case 1
             </span>
@@ -30,7 +30,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="rounded-2xl border-2 border-black bg-black p-8 text-white transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
+          <div className="rounded-2xl border-2 border-white/15 bg-black p-8 text-white transition-shadow hover:border-white/30 hover:shadow-[0_8px_30px_rgba(255,255,255,0.06)]">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
               Core Use Case 2
             </span>

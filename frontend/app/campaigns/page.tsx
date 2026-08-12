@@ -35,21 +35,21 @@ export default function CampaignsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Disaster & Community Relief Campaigns</h1>
-          <p className="mt-1 text-sm text-neutral-600">
+          <p className="mt-1 text-sm text-neutral-400">
             Public, milestone-governed relief campaigns. Donations never carry a repayment
             obligation.
           </p>
         </div>
         <Link
           href="/campaigns/create"
-className="btn-shine rounded-md border-2 border-black bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/40 hover:text-black"
+className="btn-shine rounded-md border-2 border-white bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
         >
           + Create Campaign
         </Link>
       </div>
 
       {!ADDRESSES.campaignFactory && (
-        <p className="mt-8 text-sm text-neutral-600">
+        <p className="mt-8 text-sm text-neutral-400">
           Set NEXT_PUBLIC_CAMPAIGN_FACTORY_ADDRESS in frontend/.env.local to load campaigns.
         </p>
       )}
@@ -61,7 +61,7 @@ className="btn-shine rounded-md border-2 border-black bg-black px-4 py-2 text-sm
       </div>
 
       {ADDRESSES.campaignFactory && total === 0 && (
-        <p className="mt-8 text-sm text-neutral-600">No campaigns yet. Be the first to create one.</p>
+        <p className="mt-8 text-sm text-neutral-400">No campaigns yet. Be the first to create one.</p>
       )}
     </div>
   );
@@ -92,8 +92,7 @@ function CampaignCard({ address }: { address: `0x${string}` }) {
   return (
     <Link
       href={`/campaigns/${address}`}
-className="rounded-xl border-2 border-black bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:border-white/40"
-    >
+className="rounded-xl border-2 border-white/15 bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(255,255,255,0.06)] hover:border-white/40"    >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">{(name as string | undefined) ?? "Loading..."}</h3>
         {Boolean(verified) && (

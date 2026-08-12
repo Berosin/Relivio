@@ -65,20 +65,20 @@ export default function CampaignDetailPage({
 
         )}
       </div>
-      <p className="mt-1 text-sm text-neutral-600">{descriptionStr}</p>
-      <p className="mt-1 text-xs text-neutral-600">{address}</p>
+      <p className="mt-1 text-sm text-neutral-400">{descriptionStr}</p>
+      <p className="mt-1 text-xs text-neutral-400">{address}</p>
 
       <div className="mt-6">
         <StatGrid stats={stats} />
       </div>
 
-      <div className="mt-8 flex gap-2 border-b border-neutral-800">
+      <div className="mt-8 flex gap-2 border-b border-white/10">
         {(["milestones", "donate"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium ${
-                tab === t ? "border-b-2 border-black text-black" : "text-neutral-500"            }`}
+                tab === t ? "border-b-2 border-white text-white" : "text-neutral-500"            }`}
           >
             {t === "milestones" ? "Milestones" : "Donate"}
           </button>
@@ -92,7 +92,7 @@ export default function CampaignDetailPage({
             {isOrganizer && (
               <AddMilestonePanel campaignAddress={address} onDone={() => {}} />
             )}
-            {count === 0 && <p className="text-sm text-neutral-600">No milestones yet.</p>}
+            {count === 0 && <p className="text-sm text-neutral-400">No milestones yet.</p>}
             {Array.from({ length: count }, (_, i) => i).map((id) => (
               <MilestoneCard
                 key={id}

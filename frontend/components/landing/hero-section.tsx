@@ -24,8 +24,8 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative bg-white px-4 pt-8 pb-16 sm:px-6 lg:px-12">
-      <div className="relative mx-auto max-w-[1400px] overflow-hidden rounded-2xl border-2 border-black bg-black">
+    <section className="relative bg-black px-4 pt-8 pb-16 sm:px-6 lg:px-12">
+      <div className="relative mx-auto max-w-[1400px] overflow-hidden rounded-2xl border-2 border-white/20 bg-black">
         <div className="pointer-events-none absolute right-0 top-1/2 h-[600px] w-[600px] -translate-y-1/2 opacity-80 lg:h-[900px] lg:w-[900px]">
           <AsciiPhotoEffect
             className="h-full w-full"

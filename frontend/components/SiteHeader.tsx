@@ -96,7 +96,7 @@ export function SiteHeader() {
 
       <style jsx>{`
         .glass-nav {
-          background: rgba(255, 255, 255, 0.55);
+          background: rgba(255, 255, 255, 0.98);
           -webkit-backdrop-filter: blur(24px) saturate(180%);
           backdrop-filter: blur(24px) saturate(180%);
           border: 1px solid rgba(0, 0, 0, 0.08);
