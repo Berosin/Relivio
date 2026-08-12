@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import { NetworkGuard } from "@/components/NetworkGuard";
 import { CursorGlow } from "@/components/CursorGlow";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Relivio — Turning Community Liquidity into Crisis Relief",
@@ -20,10 +21,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteHeader />
           <NetworkGuard />
           <main className="relative z-10 flex-1">{children}</main>
-          <footer className="relative z-10 border-t border-black/10 py-6 text-center text-xs text-neutral-500">
-            Relivio is a hackathon/testnet prototype. No real funds are used. All yield shown is
-            SIMULATED TESTNET YIELD unless otherwise stated.
-          </footer>
+          <SiteFooter />
         </Providers>
       </body>
     </html>
