@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HeroSection } from "@/components/landing/hero-section";
 import { HowItWorksReveal } from "@/components/landing/HowItWorksReveal";
+import { WhyRelivio } from "@/components/landing/WhyRelivio";
 
 export default function Home() {
   return (
@@ -48,6 +49,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <WhyRelivio />
     </>
   );
 }
