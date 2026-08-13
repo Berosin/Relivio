@@ -5,6 +5,7 @@ import { NetworkGuard } from "@/components/NetworkGuard";
 import { CursorGlow } from "@/components/CursorGlow";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { BackButton } from "@/components/BackButton";
 
 export const metadata: Metadata = {
   title: "Relivio — Turning Community Liquidity into Crisis Relief",
@@ -20,7 +21,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <CursorGlow />
           <SiteHeader />
           <NetworkGuard />
-          <main className="relative z-10 flex-1">{children}</main>
+          <main className="relative z-10 flex-1">
+  <BackButton />
+  {children}
+</main>
           <SiteFooter />
         </Providers>
       </body>

@@ -9,26 +9,9 @@ import { ConnectWallet } from "@/components/ConnectWallet";
 /// cases. Pure line art so it reads cleanly at nav-bar size in black & white.
 function RelivioMark() {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-    >
-      <path
-        d="M12 2L4 5v6c0 5 3.4 8.6 8 9 4.6-.4 8-4 8-9V5l-8-3z"
-        stroke="black"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M12 15.5s-3.5-2.2-3.5-4.7a2 2 0 0 1 3.5-1.3 2 2 0 0 1 3.5 1.3c0 2.5-3.5 4.7-3.5 4.7z"
-        fill="black"
-      />
-    </svg>
+    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-black">
+      <span className="font-display text-sm leading-none text-white">R</span>
+    </div>
   );
 }
 
