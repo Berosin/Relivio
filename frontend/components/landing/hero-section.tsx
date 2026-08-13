@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { HeroMoneyBackground } from "./HeroMoneyBackground";
 
 const words = ["assist", "protect", "fund", "rebuild"];
@@ -101,26 +99,7 @@ export function HeroSection() {
             contracts, never by an admin.
           </p>
 
-          <div
-            className={`flex flex-col items-start gap-4 transition-all delay-300 duration-700 sm:flex-row ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <Button size="lg" className="btn-shine group h-14 rounded-md px-8 text-base" asChild>
-              <Link href="/funds">
-                Explore Emergency Funds
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-14 rounded-md border-white/30 bg-transparent px-8 text-base text-white hover:border-white hover:bg-white hover:text-black"
-              asChild
-            >
-              <Link href="/campaigns">Explore Relief Campaigns</Link>
-            </Button>
-          </div>
+        
         </div>
       </div>
 
