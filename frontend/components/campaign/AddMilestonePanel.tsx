@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { ABIS } from "@/contracts/abis";
+import { getFriendlyErrorMessage } from "@/lib/errors";
 import { parseRUSD } from "@/lib/format";
 
 export function AddMilestonePanel({
@@ -52,7 +53,7 @@ useEffect(() => {
         >
           Add Milestone
         </button>
-        {error && <p className="text-xs text-red-400">{error.message}</p>}
+        {error && <p className="text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
       </div>
     </div>
   );

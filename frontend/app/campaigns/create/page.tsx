@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { ABIS } from "@/contracts/abis";
+import { getFriendlyErrorMessage } from "@/lib/errors";
 import { ADDRESSES } from "@/lib/addresses";
 import { parseRUSD } from "@/lib/format";
 import { SpatialCard } from "@/components/SpatialCard";
@@ -198,7 +199,7 @@ export default function CreateCampaignPage() {
               ? "Deploying campaign..."
               : "Create Campaign"}
           </button>
-          {error && <p className="text-sm text-red-600">{error.message}</p>}
+          {error && <p className="text-sm text-red-600">{getFriendlyErrorMessage(error)}</p>}
           {isSuccess && <p className="text-sm font-medium text-neutral-900">Campaign created! Redirecting...</p>}
         </form>
       </SpatialCard>

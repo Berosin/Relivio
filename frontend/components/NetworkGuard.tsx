@@ -2,6 +2,7 @@
 
 import { useAccount, useSwitchChain } from "wagmi";
 import { foundry } from "wagmi/chains";
+import { getFriendlyErrorMessage } from "@/lib/errors";
 
 export function NetworkGuard() {
   const { isConnected, chainId } = useAccount();
@@ -24,7 +25,7 @@ export function NetworkGuard() {
   >
     {isPending ? "Switching..." : `Switch to ${targetName}`}
   </button>
-  {error && <span className="ml-2 text-red-600">{error.message}</span>}
+  {error && <span className="ml-2 text-red-600">{getFriendlyErrorMessage(error)}</span>}
 </div>
   );
 }

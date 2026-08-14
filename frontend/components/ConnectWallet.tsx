@@ -2,6 +2,7 @@
 
 import { useAccount, useConnect, useDisconnect, useReadContract } from "wagmi";
 import { ABIS } from "@/contracts/abis";
+import { getFriendlyErrorMessage } from "@/lib/errors";
 import { ADDRESSES } from "@/lib/addresses";
 import { formatRUSD, shortAddress } from "@/lib/format";
 
@@ -55,7 +56,7 @@ export function ConnectWallet() {
       >
         {isPending ? "Connecting..." : "Connect Wallet"}
       </button>
-      {error && <span className="text-xs text-red-600">{error.message}</span>}
+      {error && <span className="text-xs text-red-600">{getFriendlyErrorMessage(error)}</span>}
     </div>
   );
 }

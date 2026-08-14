@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { ABIS } from "@/contracts/abis";
+import { getFriendlyErrorMessage } from "@/lib/errors";
 import { parseRUSD, formatRUSD } from "@/lib/format";
 import { assessRequestRisk, type RiskAssessment } from "@/lib/aiRisk";
 import { RiskBadge } from "@/components/RiskBadge";
@@ -145,7 +146,7 @@ export function CreateRequestPanel({
         >
           {isPending ? "Confirm in wallet..." : isConfirming ? "Submitting..." : "Submit Request"}
         </button>
-        {error && <p className="text-xs text-red-400">{error.message}</p>}
+        {error && <p className="text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { ABIS } from "@/contracts/abis";
+import { getFriendlyErrorMessage } from "@/lib/errors";
 import { parseRUSD } from "@/lib/format";
 import { useTokenApproval } from "@/hooks/useTokenApproval";
 
@@ -67,7 +68,7 @@ useEffect(() => {
           {isPending ? "Confirm in wallet..." : isConfirming ? "Donating..." : "2. Donate"}
         </button>
       )}
-      {error && <p className="mt-2 text-xs text-red-400">{error.message}</p>}
+      {error && <p className="mt-2 text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
     </div>
   );
 }
