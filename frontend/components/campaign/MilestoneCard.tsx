@@ -7,6 +7,9 @@ import { formatRUSD, statusLabel } from "@/lib/format";
 import { assessMilestoneRisk, type RiskAssessment } from "@/lib/aiRisk";
 import { RiskBadge } from "@/components/RiskBadge";
 
+// getMilestone() returns a single struct — viem decodes single-struct
+// returns as a plain object keyed by field name (NOT an array). Do not
+// destructure this with array syntax.
 type MilestoneStruct = {
   description: string;
   amount: bigint;
@@ -49,6 +52,8 @@ export function MilestoneCard({
     functionName: "verified",
   });
 
+  // Pre-flight checks so the UI can explain *why* an action isn't available,
+  // instead of letting the wallet pop up a transaction that just reverts.
   const { data: myShares } = useReadContract({
     address: campaignAddress,
     abi: ABIS.Campaign,
@@ -73,26 +78,34 @@ export function MilestoneCard({
   const isMember = Boolean(myShares && (myShares as bigint) > 0n);
   const hasAlreadyVoted = Boolean(alreadyVoted);
 
+  // transparencySnapshot() returns: raised, target, progressBps, distributed,
+  // remaining, defiPrincipal, pendingYield, contributors. `remaining` is the
+  // COMBINED reserve+DeFi+yield figure — the contract's proposeMilestoneRelease()
+  // only checks against the LIQUID reserve, so we back that out here:
+  // liquidReserve = remaining - defiPrincipal - pendingYield.
+  const s = snapshot as unknown as bigint[] | undefined;
+  const liquidReserve = s ? s[4] - s[5] - s[6] : undefined;
+
   useEffect(() => {
     if (isSuccess) refetch();
   }, [isSuccess, refetch]);
 
   useEffect(() => {
-    if (status !== 0 || !isOrganizer || !snapshot || amount === undefined) {
+    if (status !== 0 || !isOrganizer || !s || amount === undefined) {
       setRisk(null);
       return;
     }
-    const s = snapshot as unknown as bigint[];
-    const [raised, target, , , remaining] = s;
+    const [raised, target] = s;
     assessMilestoneRisk({
       milestone_amount: Number(amount) / 1e6,
-      campaign_reserve_balance: Number(remaining ?? 0n) / 1e6,
+      campaign_reserve_balance: Number(liquidReserve ?? 0n) / 1e6,
       campaign_raised: Number(raised) / 1e6,
       campaign_target: Number(target) / 1e6,
       organizer_prior_milestones_released: 0,
       organizer_prior_milestones_rejected: 0,
       campaign_verified: Boolean(verified),
     }).then(setRisk);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, isOrganizer, snapshot, verified, amount]);
 
   if (!data) return null;
@@ -107,6 +120,11 @@ export function MilestoneCard({
   if (!isConnected) voteBlockedReason = "Connect your wallet to vote.";
   else if (hasAlreadyVoted) voteBlockedReason = "You've already voted on this milestone.";
   else if (!isMember) voteBlockedReason = "Donate to this campaign to get voting power.";
+
+  // Why "Propose Release" would fail: the milestone amount exceeds what's
+  // actually liquid in the reserve right now (separate from the DeFi-locked
+  // and pending-yield portions of the treasury).
+  const insufficientReserve = Boolean(liquidReserve !== undefined && amountVal > liquidReserve);
 
   return (
     <div className="card">
@@ -134,8 +152,18 @@ export function MilestoneCard({
       {statusVal === 0 && isOrganizer && (
         <>
           {risk && <RiskBadge assessment={risk} />}
+
+          {insufficientReserve && (
+            <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+              This milestone needs {formatRUSD(amountVal)} RUSD, but only{" "}
+              {formatRUSD(liquidReserve)} RUSD is currently liquid in the campaign&apos;s reserve
+              (the rest is either not yet raised or is working in the DeFi yield engine). Wait for
+              more donations, or add a smaller milestone instead.
+            </p>
+          )}
+
           <button
-            disabled={isPending}
+            disabled={isPending || insufficientReserve}
             onClick={() =>
               writeContract({
                 address: campaignAddress,
@@ -144,7 +172,7 @@ export function MilestoneCard({
                 args: [BigInt(milestoneId)],
               })
             }
-                className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+            className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
           >
             Propose Release
           </button>
@@ -169,7 +197,7 @@ export function MilestoneCard({
                     args: [BigInt(milestoneId), true],
                   })
                 }
-                className="flex-1 rounded-lg bg-sky-500 px-3 py-2 text-sm font-semibold text-black hover:bg-sky-400 disabled:opacity-50"
+                className="flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
               >
                 Vote YES
               </button>
@@ -183,7 +211,7 @@ export function MilestoneCard({
                     args: [BigInt(milestoneId), false],
                   })
                 }
-                className="flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+                className="flex-1 rounded-lg border-2 border-white px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
               >
                 Vote NO
               </button>
@@ -203,7 +231,7 @@ export function MilestoneCard({
               args: [BigInt(milestoneId)],
             })
           }
-          className="mt-3 w-full rounded-lg bg-sky-500 px-3 py-2 text-sm font-semibold text-black hover:bg-sky-400 disabled:opacity-50"
+          className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
         >
           Finalize Milestone
         </button>
