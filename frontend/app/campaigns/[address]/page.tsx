@@ -8,6 +8,8 @@ import { formatRUSD, bpsToPercent } from "@/lib/format";
 import { DonatePanel } from "@/components/campaign/DonatePanel";
 import { MilestoneCard } from "@/components/campaign/MilestoneCard";
 import { AddMilestonePanel } from "@/components/campaign/AddMilestonePanel";
+import { VerifierPanel } from "@/components/campaign/VerifierPanel";
+
 
 export default function CampaignDetailPage({
   params,
@@ -80,6 +82,8 @@ export default function CampaignDetailPage({
       </div>
       <p className="mt-1 text-sm text-neutral-400">{descriptionStr}</p>
       <p className="mt-1 text-xs text-neutral-400">{address}</p>
+
+      <VerifierPanel campaignAddress={address} />
 
       <div className="mt-6">
         <StatGrid stats={stats} />
