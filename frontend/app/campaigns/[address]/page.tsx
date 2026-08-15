@@ -39,14 +39,27 @@ export default function CampaignDetailPage({
   const [raised, target, progressBps, distributed, remaining, defiPrincipal, pendingYield, contributors] =
     s ?? [];
 
+  // `remaining` from the contract is a COMBINED figure: liquid reserve +
+  // DeFi principal + pending yield. That's what caused confusion around
+  // milestone releases (which can only draw from the liquid portion), so
+  // we back that liquid amount out explicitly for display.
+  const liquidReserve =
+    remaining !== undefined && defiPrincipal !== undefined && pendingYield !== undefined
+      ? remaining - defiPrincipal - pendingYield
+      : undefined;
+
   const stats = s
     ? [
         { label: "Raised", value: `${formatRUSD(raised)} RUSD` },
         { label: "Target", value: `${formatRUSD(target)} RUSD` },
         { label: "Progress", value: bpsToPercent(progressBps ?? 0n) },
         { label: "Distributed", value: `${formatRUSD(distributed)} RUSD` },
-        { label: "Remaining", value: `${formatRUSD(remaining)} RUSD` },
-        { label: "DeFi Allocation", value: `${formatRUSD(defiPrincipal)} RUSD` },
+        {
+          label: "Available Now",
+          value: `${formatRUSD(liquidReserve)} RUSD`,
+          accent: "text-white",
+        },
+        { label: "In DeFi (locked)", value: `${formatRUSD(defiPrincipal)} RUSD` },
         { label: "Simulated Yield", value: `+${formatRUSD(pendingYield)} RUSD`, accent: "text-white" },
         { label: "Contributors", value: (contributors ?? 0n).toString() },
       ]
