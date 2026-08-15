@@ -1,12 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useReadContract, useReadContracts } from "wagmi";
 import { ABIS } from "@/contracts/abis";
 import { ADDRESSES } from "@/lib/addresses";
 import { formatRUSD } from "@/lib/format";
 
+const CAMPAIGN_TYPES = [
+  "INDIVIDUAL_EMERGENCY",
+  "DISASTER_RELIEF",
+  "COMMUNITY_RELIEF",
+  "MEDICAL_RELIEF",
+  "REBUILDING",
+  "HUMANITARIAN_RELIEF",
+  "OTHER",
+];
+
 export default function CampaignsPage() {
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("ALL");
+
   const { data: count } = useReadContract({
     address: ADDRESSES.campaignFactory,
     abi: ABIS.CampaignFactory,
@@ -30,6 +44,43 @@ export default function CampaignsPage() {
     .map((r) => r.result as `0x${string}` | undefined)
     .filter(Boolean) as `0x${string}`[];
 
+  const { data: names } = useReadContracts({
+    contracts: campaignAddresses.map((addr) => ({
+      address: addr,
+      abi: ABIS.Campaign,
+      functionName: "campaignName",
+    })) as never[],
+    query: { enabled: campaignAddresses.length > 0 },
+  });
+  const { data: descriptions } = useReadContracts({
+    contracts: campaignAddresses.map((addr) => ({
+      address: addr,
+      abi: ABIS.Campaign,
+      functionName: "description",
+    })) as never[],
+    query: { enabled: campaignAddresses.length > 0 },
+  });
+  const { data: types } = useReadContracts({
+    contracts: campaignAddresses.map((addr) => ({
+      address: addr,
+      abi: ABIS.Campaign,
+      functionName: "campaignType",
+    })) as never[],
+    query: { enabled: campaignAddresses.length > 0 },
+  });
+
+  const searchLower = search.trim().toLowerCase();
+  const visibleAddresses = campaignAddresses.filter((_, i) => {
+    const name = (names?.[i]?.result as string | undefined)?.toLowerCase() ?? "";
+    const description = (descriptions?.[i]?.result as string | undefined)?.toLowerCase() ?? "";
+    const typeIdx = types?.[i]?.result as number | undefined;
+    const typeName = typeIdx !== undefined ? CAMPAIGN_TYPES[typeIdx] : undefined;
+
+    if (typeFilter !== "ALL" && typeName !== typeFilter) return false;
+    if (searchLower && !name.includes(searchLower) && !description.includes(searchLower)) return false;
+    return true;
+  });
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
       <div className="flex items-center justify-between">
@@ -42,7 +93,7 @@ export default function CampaignsPage() {
         </div>
         <Link
           href="/campaigns/create"
-className="btn-shine rounded-md border-2 border-white bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
+          className="btn-shine rounded-md border-2 border-white bg-black px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black"
         >
           + Create Campaign
         </Link>
@@ -54,14 +105,42 @@ className="btn-shine rounded-md border-2 border-white bg-black px-4 py-2 text-sm
         </p>
       )}
 
+      {ADDRESSES.campaignFactory && total > 0 && (
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <input
+            type="text"
+            placeholder="Search campaigns by name or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input max-w-md"
+          />
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="input max-w-xs"
+          >
+            <option value="ALL">All types</option>
+            {CAMPAIGN_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t.replaceAll("_", " ")}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {campaignAddresses.map((addr) => (
+        {visibleAddresses.map((addr) => (
           <CampaignCard key={addr} address={addr} />
         ))}
       </div>
 
       {ADDRESSES.campaignFactory && total === 0 && (
-        <p className="mt-8 text-sm text-neutral-400">No campaigns yet. Be the first to create one.</p>
+        <p className="mt-8 text-sm text-neutral-500">No campaigns yet. Be the first to create one.</p>
+      )}
+
+      {ADDRESSES.campaignFactory && total > 0 && visibleAddresses.length === 0 && (
+        <p className="mt-8 text-sm text-neutral-500">No campaigns match your search/filter.</p>
       )}
     </div>
   );
@@ -92,12 +171,12 @@ function CampaignCard({ address }: { address: `0x${string}` }) {
   return (
     <Link
       href={`/campaigns/${address}`}
-className="rounded-xl border-2 border-white/15 bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(255,255,255,0.06)] hover:border-white/40"    >
+      className="rounded-xl border-2 border-white/15 bg-black p-5 text-white transition-shadow hover:shadow-[0_4px_20px_rgba(255,255,255,0.06)] hover:border-white/40"
+    >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">{(name as string | undefined) ?? "Loading..."}</h3>
         {Boolean(verified) && (
           <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">Verified</span>
-
         )}
       </div>
       <p className="mt-3 text-lg font-bold text-white">
