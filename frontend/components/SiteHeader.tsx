@@ -67,6 +67,9 @@ export function SiteHeader() {
               <Link href="/analytics" className="text-neutral-600 hover:text-black transition-colors">
                 Analytics
               </Link>
+              <Link href="/reputation" className="text-neutral-600 hover:text-black transition-colors">
+              Reputation
+              </Link>
             </div>
 
             <ConnectWallet />
