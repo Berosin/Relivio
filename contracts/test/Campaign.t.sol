@@ -104,4 +104,45 @@ contract CampaignTest is Test {
         campaign.setVerified(true);
         assertTrue(campaign.verified());
     }
+
+    function test_SecondCampaignCreationBlockedByCooldown() public {
+        Campaign.CampaignParams memory params = Campaign.CampaignParams({
+            name: "Second Campaign",
+            campaignType: Campaign.CampaignType.DISASTER_RELIEF,
+            description: "Should be rate-limited",
+            beneficiaryInfo: "Test",
+            fundingTarget: 1_000e6,
+            deadline: block.timestamp + 30 days,
+            emergencyReserveBps: 3000,
+            defiAllocationBps: 7000,
+            votingThresholdBps: 6000,
+            votingDuration: 24 hours
+        });
+
+        // organizer already created one campaign in setUp() at this same timestamp.
+        vm.prank(organizer);
+        vm.expectRevert(bytes("CampaignFactory: creation cooldown active, please wait before creating another campaign"));
+        campaignFactory.createCampaign(params);
+    }
+
+    function test_CampaignCreationAllowedAfterCooldownExpires() public {
+        Campaign.CampaignParams memory params = Campaign.CampaignParams({
+            name: "Second Campaign",
+            campaignType: Campaign.CampaignType.DISASTER_RELIEF,
+            description: "Created after cooldown",
+            beneficiaryInfo: "Test",
+            fundingTarget: 1_000e6,
+            deadline: block.timestamp + 30 days,
+            emergencyReserveBps: 3000,
+            defiAllocationBps: 7000,
+            votingThresholdBps: 6000,
+            votingDuration: 24 hours
+        });
+
+        vm.warp(block.timestamp + 1 hours + 1);
+
+        vm.prank(organizer);
+        address newCampaign = campaignFactory.createCampaign(params);
+        assertTrue(newCampaign != address(0));
+    }
 }

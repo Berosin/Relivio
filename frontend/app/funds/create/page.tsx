@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { ABIS } from "@/contracts/abis";
 import { getFriendlyErrorMessage } from "@/lib/errors";
 import { ADDRESSES } from "@/lib/addresses";
@@ -11,9 +11,19 @@ import { SpatialCard } from "@/components/SpatialCard";
 
 export default function CreateFundPage() {
   const router = useRouter();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+
+  const { data: cooldownRemaining } = useReadContract({
+    address: ADDRESSES.fundFactory,
+    abi: ABIS.FundFactory,
+    functionName: "cooldownRemaining",
+    args: address ? [address] : undefined,
+    query: { enabled: Boolean(address && ADDRESSES.fundFactory), refetchInterval: 15_000 },
+  });
+  const cooldownSeconds = cooldownRemaining ? Number(cooldownRemaining) : 0;
+  const cooldownActive = cooldownSeconds > 0;
 
   const [form, setForm] = useState({
     name: "Relivio Campus Emergency Fund",
@@ -177,13 +187,22 @@ export default function CreateFundPage() {
             yield engine (SIMULATED TESTNET YIELD).
           </p>
 
+          {cooldownActive && (
+            <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+              To prevent spam, each wallet can only create one fund per hour. You can create
+              another fund in {formatCooldown(cooldownSeconds)}.
+            </p>
+          )}
+
           <button
             type="submit"
-            disabled={!isConnected || isPending || isConfirming}
+            disabled={!isConnected || isPending || isConfirming || cooldownActive}
             className="btn-shine w-full rounded-lg border-2 border-neutral-900 bg-neutral-900 px-4 py-3 font-semibold text-white shadow-[0_8px_20px_rgba(0,0,0,0.25)] transition-colors hover:bg-white hover:text-neutral-900 disabled:opacity-40"
           >
             {!isConnected
               ? "Connect wallet to continue"
+              : cooldownActive
+              ? `Wait ${formatCooldown(cooldownSeconds)}`
               : isPending
               ? "Confirm in wallet..."
               : isConfirming
@@ -196,6 +215,12 @@ export default function CreateFundPage() {
       </SpatialCard>
     </div>
   );
+}
+
+function formatCooldown(seconds: number): string {
+  if (seconds >= 3600) return `${Math.ceil(seconds / 3600)}h`;
+  if (seconds >= 60) return `${Math.ceil(seconds / 60)}m`;
+  return `${seconds}s`;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

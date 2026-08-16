@@ -171,4 +171,65 @@ contract CommunityFundTest is Test {
         fund.vote(id, true);
         vm.stopPrank();
     }
+
+    function test_SecondFundCreationBlockedByCooldown() public {
+        CommunityFund.FundConfig memory cfg = CommunityFund.FundConfig({
+            name: "Second Fund",
+            description: "Should be rate-limited",
+            fundType: "GENERAL",
+            minContribution: 10e6,
+            maxEmergencyRequest: 500e6,
+            votingDuration: 24 hours,
+            votingThresholdBps: 6000,
+            emergencyReserveBps: 2000,
+            defiAllocationBps: 8000,
+            defaultRepaymentPeriod: 90 days
+        });
+
+        // organizer already created one fund in setUp() at this same timestamp.
+        vm.prank(organizer);
+        vm.expectRevert(bytes("FundFactory: creation cooldown active, please wait before creating another fund"));
+        fundFactory.createFund(cfg);
+    }
+
+    function test_FundCreationAllowedAfterCooldownExpires() public {
+        CommunityFund.FundConfig memory cfg = CommunityFund.FundConfig({
+            name: "Second Fund",
+            description: "Created after cooldown",
+            fundType: "GENERAL",
+            minContribution: 10e6,
+            maxEmergencyRequest: 500e6,
+            votingDuration: 24 hours,
+            votingThresholdBps: 6000,
+            emergencyReserveBps: 2000,
+            defiAllocationBps: 8000,
+            defaultRepaymentPeriod: 90 days
+        });
+
+        vm.warp(block.timestamp + 1 hours + 1);
+
+        vm.prank(organizer);
+        address newFund = fundFactory.createFund(cfg);
+        assertTrue(newFund != address(0));
+    }
+
+    function test_DifferentOrganizersNotAffectedByEachOthersCooldown() public {
+        CommunityFund.FundConfig memory cfg = CommunityFund.FundConfig({
+            name: "Bob's Fund",
+            description: "A different organizer, no cooldown yet",
+            fundType: "GENERAL",
+            minContribution: 10e6,
+            maxEmergencyRequest: 500e6,
+            votingDuration: 24 hours,
+            votingThresholdBps: 6000,
+            emergencyReserveBps: 2000,
+            defiAllocationBps: 8000,
+            defaultRepaymentPeriod: 90 days
+        });
+
+        // bob has never created a fund, so he's unaffected by organizer's cooldown.
+        vm.prank(bob);
+        address newFund = fundFactory.createFund(cfg);
+        assertTrue(newFund != address(0));
+    }
 }

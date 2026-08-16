@@ -16,6 +16,12 @@ contract CampaignFactory is Ownable {
     address public immutable reputation;
     address public platformVerifier;
 
+    /// @notice Minimum time a single wallet must wait between creating campaigns.
+    ///         Prevents spam/flooding the platform with junk campaigns — a real
+    ///         organizer launching a genuine relief campaign is never blocked.
+    uint256 public constant CREATION_COOLDOWN = 1 hours;
+    mapping(address => uint256) public lastCampaignCreatedAt;
+
     address[] public allCampaigns;
     mapping(address => address[]) public campaignsByOrganizer;
     mapping(Campaign.CampaignType => address[]) private _campaignsByType;
@@ -35,6 +41,12 @@ contract CampaignFactory is Ownable {
     }
 
     function createCampaign(Campaign.CampaignParams memory params) external returns (address campaign) {
+        require(
+            lastCampaignCreatedAt[msg.sender] == 0 || block.timestamp >= lastCampaignCreatedAt[msg.sender] + CREATION_COOLDOWN,
+            "CampaignFactory: creation cooldown active, please wait before creating another campaign"
+        );
+        lastCampaignCreatedAt[msg.sender] = block.timestamp;
+
         YieldAdapter adapter = new YieldAdapter(stablecoin);
 
         Campaign c = new Campaign(stablecoin, address(adapter), reputation, msg.sender, params);
@@ -61,5 +73,12 @@ contract CampaignFactory is Ownable {
 
     function campaignsByType(Campaign.CampaignType t) external view returns (address[] memory) {
         return _campaignsByType[t];
+    }
+
+    /// @notice Seconds remaining before `organizer` can create another campaign (0 if none).
+    function cooldownRemaining(address organizer) external view returns (uint256) {
+        uint256 nextAllowed = lastCampaignCreatedAt[organizer] + CREATION_COOLDOWN;
+        if (block.timestamp >= nextAllowed) return 0;
+        return nextAllowed - block.timestamp;
     }
 }
