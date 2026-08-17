@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useReadContract, useReadContracts } from "wagmi";
 import { ABIS } from "@/contracts/abis";
 import { ADDRESSES } from "@/lib/addresses";
 import { formatRUSD } from "@/lib/format";
 
+const PAGE_SIZE = 9;
+
 export default function FundsPage() {
   const [search, setSearch] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const { data: count } = useReadContract({
     address: ADDRESSES.fundFactory,
@@ -43,7 +46,7 @@ export default function FundsPage() {
   });
 
   const searchLower = search.trim().toLowerCase();
-  const visibleAddresses = fundAddresses.filter((_, i) => {
+  const filteredAddresses = fundAddresses.filter((_, i) => {
     if (!searchLower) return true;
     const cfg = configs?.[i]?.result as string[] | undefined;
     const name = cfg?.[0]?.toLowerCase() ?? "";
@@ -51,6 +54,13 @@ export default function FundsPage() {
     const fundType = cfg?.[2]?.toLowerCase() ?? "";
     return name.includes(searchLower) || description.includes(searchLower) || fundType.includes(searchLower);
   });
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [search]);
+
+  const visibleAddresses = filteredAddresses.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredAddresses.length;
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
@@ -97,8 +107,22 @@ export default function FundsPage() {
         </p>
       )}
 
-      {ADDRESSES.fundFactory && total > 0 && visibleAddresses.length === 0 && (
+      {ADDRESSES.fundFactory && total > 0 && filteredAddresses.length === 0 && (
         <p className="mt-8 text-sm text-neutral-500">No funds match &quot;{search}&quot;.</p>
+      )}
+
+      {hasMore && (
+        <div className="mt-8 flex flex-col items-center gap-2">
+          <p className="text-xs text-neutral-500">
+            Showing {visibleAddresses.length} of {filteredAddresses.length}
+          </p>
+          <button
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            className="rounded-md border-2 border-white/20 px-5 py-2 text-sm font-semibold text-white transition-colors hover:border-white hover:bg-white hover:text-black"
+          >
+            Load more
+          </button>
+        </div>
       )}
     </div>
   );
