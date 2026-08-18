@@ -121,7 +121,7 @@ export function ScrollCoreCases() {
               <div
                 onMouseMove={handleShineMove}
                 onMouseLeave={handleShineLeave}
-                className="shine-card relative overflow-hidden rounded-2xl p-10"
+                className="shine-card relative overflow-hidden rounded-2xl p-6 sm:p-10"
                 style={{ "--shine-x": "50%", "--shine-y": "50%", "--shine-opacity": 0 } as React.CSSProperties}
               >
                 <div className="shine-layer pointer-events-none absolute inset-0" />

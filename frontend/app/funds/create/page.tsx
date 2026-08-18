@@ -115,7 +115,7 @@ export default function CreateFundPage() {
               onChange={(e) => update("fundType", e.target.value)}
             />
           </Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Minimum contribution (RUSD)">
               <input
                 className="input-light"
