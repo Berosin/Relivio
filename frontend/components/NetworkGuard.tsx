@@ -15,7 +15,7 @@ export function NetworkGuard() {
   if (chainId === targetChainId) return null;
 
   return (
-    <div className="border-b border-red-300 bg-red-50 px-4 py-2 text-center text-xs text-red-700">
+    <div role="alert" className="border-b border-red-300 bg-red-50 px-4 py-2 text-center text-xs text-red-700">
   Wrong network detected. Relivio needs <strong>{targetName}</strong> (chain ID {targetChainId}) —
   you&apos;re currently connected to chain {chainId}.{" "}
   <button

@@ -15,5 +15,5 @@ export function CursorGlow() {
     return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
-  return <div className="cursor-glow" />;
+  return <div className="cursor-glow" aria-hidden="true" />;
 }

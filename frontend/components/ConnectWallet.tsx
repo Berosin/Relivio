@@ -23,13 +23,15 @@ export function ConnectWallet() {
     return (
       <div className="flex items-center gap-3">
         {balance !== undefined && (
-          <span className="text-sm text-neutral-400">
+          <span className="text-sm text-neutral-500">
             {formatRUSD(balance as bigint)} RUSD
           </span>
         )}
         <button
           onClick={() => disconnect()}
-            className="rounded-md border-2 border-black bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-black hover:text-white"
+          aria-label={`Connected wallet ${address}. Click to disconnect.`}
+          title={address}
+          className="rounded-md border-2 border-black bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-black hover:text-white"
         >
           {shortAddress(address)}
         </button>
@@ -39,7 +41,7 @@ export function ConnectWallet() {
 
   if (connectors.length === 0) {
     return (
-      <span className="text-xs text-neutral-500">
+      <span className="text-xs text-neutral-500" role="status">
         No wallet detected — install MetaMask
       </span>
     );
@@ -56,7 +58,11 @@ export function ConnectWallet() {
       >
         {isPending ? "Connecting..." : "Connect Wallet"}
       </button>
-      {error && <span className="text-xs text-red-600">{getFriendlyErrorMessage(error)}</span>}
+      {error && (
+        <span className="text-xs text-red-600" role="alert">
+          {getFriendlyErrorMessage(error)}
+        </span>
+      )}
     </div>
   );
 }

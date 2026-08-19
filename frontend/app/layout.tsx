@@ -18,15 +18,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-black text-white font-sans">
         <Providers>
-          <CursorGlow />
-          <SiteHeader />
-          <NetworkGuard />
-          <main className="relative z-10 flex-1">
-  <BackButton />
-  {children}
-</main>
-          <SiteFooter />
-        </Providers>
+  <a
+    href="#main-content"
+    className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-black"
+  >
+    Skip to main content
+  </a>
+  <CursorGlow />
+  <SiteHeader />
+  <NetworkGuard />
+  <main id="main-content" className="relative z-10 flex-1">
+    {children}
+  </main>
+  <SiteFooter />
+</Providers>
       </body>
     </html>
   );

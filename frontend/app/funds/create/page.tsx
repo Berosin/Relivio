@@ -209,8 +209,8 @@ export default function CreateFundPage() {
               ? "Deploying fund..."
               : "Create Fund"}
           </button>
-          {error && <p className="text-sm text-red-600">{getFriendlyErrorMessage(error)}</p>}
-          {isSuccess && <p className="text-sm font-medium text-neutral-900">Fund created! Redirecting...</p>}
+          {error && <p role="alert" className="text-sm text-red-600">{getFriendlyErrorMessage(error)}</p>}
+          {isSuccess && <p role="status" className="text-sm font-medium text-neutral-900">Fund created! Redirecting...</p>}
         </form>
       </SpatialCard>
     </div>

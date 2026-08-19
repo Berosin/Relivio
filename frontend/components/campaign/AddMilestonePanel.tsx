@@ -53,7 +53,7 @@ useEffect(() => {
         >
           Add Milestone
         </button>
-        {error && <p className="text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
+        {error && <p role="alert" className="text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
       </div>
     </div>
   );

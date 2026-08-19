@@ -58,7 +58,7 @@ export function VerifierPanel({ campaignAddress }: { campaignAddress: `0x${strin
           ? "Remove Verification"
           : "Verify This Campaign"}
       </button>
-      {error && <p className="mt-2 text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
+      {error && <p role="alert" className="mt-2 text-xs text-red-400">{getFriendlyErrorMessage(error)}</p>}
     </div>
   );
 }
