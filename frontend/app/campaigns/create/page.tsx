@@ -7,6 +7,8 @@ import { ABIS } from "@/contracts/abis";
 import { getFriendlyErrorMessage } from "@/lib/errors";
 import { ADDRESSES } from "@/lib/addresses";
 import { parseRUSD } from "@/lib/format";
+import { assessCampaignRisk, type RiskAssessment } from "@/lib/aiRisk";
+import { RiskBadge } from "@/components/RiskBadge";
 import { SpatialCard } from "@/components/SpatialCard";
 
 const CAMPAIGN_TYPES = [
@@ -46,10 +48,42 @@ export default function CreateCampaignPage() {
     votingThresholdPercent: "60",
     votingDurationHours: "24",
   });
+  const [risk, setRisk] = useState<RiskAssessment | null>(null);
+  const [checkingRisk, setCheckingRisk] = useState(false);
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
+
+  // Debounced advisory risk check as the organizer fills in the form. A brand
+  // new campaign always has campaign_verified=false, zero donors, and zero
+  // raised — verification happens separately, after creation. This gives the
+  // organizer an early, non-blocking signal (e.g. "your description is too
+  // thin", "large ask for a first-time organizer") before they ever submit
+  // the on-chain transaction.
+  useEffect(() => {
+    const target = Number(form.fundingTarget);
+    if (!target || target <= 0) {
+      setRisk(null);
+      return;
+    }
+    const t = setTimeout(async () => {
+      setCheckingRisk(true);
+      const result = await assessCampaignRisk({
+        funding_target: target,
+        campaign_raised: 0,
+        donor_count: 0,
+        top_donor_amount: 0,
+        campaign_verified: false,
+        description_length: form.description.length,
+        has_cover_image: false, // no cover-image upload field in this form yet
+        has_location: false, // no dedicated location field in this form yet
+      });
+      setRisk(result);
+      setCheckingRisk(false);
+    }, 600);
+    return () => clearTimeout(t);
+  }, [form.fundingTarget, form.description]);
 
   function submit() {
     if (!ADDRESSES.campaignFactory) return;
@@ -195,6 +229,9 @@ export default function CreateCampaignPage() {
             Remaining {100 - Number(form.emergencyReservePercent || 0)}% goes to the DeFi yield
             engine (SIMULATED TESTNET YIELD).
           </p>
+
+          {checkingRisk && <p className="text-xs text-neutral-500">Checking advisory risk signal...</p>}
+          {risk && <RiskBadge assessment={risk} />}
 
           {cooldownActive && (
             <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
