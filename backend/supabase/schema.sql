@@ -129,5 +129,15 @@ create policy "public read campaign_metadata" on campaign_metadata for select us
 create policy "public read updates" on updates for select using (true);
 create policy "public read visible comments" on comments for select using (hidden = false);
 
+-- Intentionally no anon INSERT/UPDATE policy on profiles/comments/updates:
+-- this app authenticates by wallet signature, not a Supabase Auth session,
+-- so there's no auth.uid() for RLS to check against here. Letting anon
+-- insert directly (with author_address as a plain text column) would let
+-- anyone write a comment "from" someone else's wallet. All writes instead
+-- go through frontend/app/api/{comments,profile,watchlist}/route.ts, which
+-- verifies a wallet signature (frontend/lib/walletAuth.ts) and then writes
+-- with the service-role key, bypassing RLS deliberately and only after
+-- that verification — the same trust model backend/indexer/index.ts
+-- already uses for its own writes.
 create policy "no anon access notifications" on notifications for all using (false);
 create policy "no anon access watchlist" on watchlist for all using (false);
