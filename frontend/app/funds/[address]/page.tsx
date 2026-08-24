@@ -7,6 +7,7 @@ import { StatGrid, treasuryStats } from "@/components/StatGrid";
 import { ContributePanel } from "@/components/fund/ContributePanel";
 import { CreateRequestPanel } from "@/components/fund/CreateRequestPanel";
 import { RequestCard } from "@/components/fund/RequestCard";
+import { WatchButton } from "@/components/WatchButton";
 
 export default function FundDetailPage({
   params,
@@ -40,7 +41,12 @@ export default function FundDetailPage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="text-2xl font-bold">{name}</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl font-bold">{name}</h1>
+        <span className="ml-auto">
+          <WatchButton targetType="fund" targetAddress={address} />
+        </span>
+      </div>
       <p className="mt-1 text-sm text-neutral-400">{description}</p>
       <p className="mt-1 text-xs text-neutral-400">{address}</p>
 

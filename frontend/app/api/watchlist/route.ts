@@ -32,6 +32,29 @@ function parseBody(body: unknown) {
   } as const;
 }
 
+export async function GET(req: NextRequest) {
+  const wallet = req.nextUrl.searchParams.get("wallet");
+  if (!wallet || !ADDRESS_RE.test(wallet)) {
+    return NextResponse.json({ error: "Missing or invalid wallet query param." }, { status: 400 });
+  }
+
+  // No signature required for a read — worst case someone learns which
+  // public addresses a given wallet is watching, which isn't sensitive
+  // enough to justify a signature prompt on every page load. Writes below
+  // still require one. RLS blocks anon SELECT on this table entirely (see
+  // schema.sql), so this has to go through supabaseAdmin like the writes do.
+  const { data, error } = await supabaseAdmin
+    .from("watchlist")
+    .select("target_type, target_address")
+    .eq("wallet_address", wallet.toLowerCase());
+
+  if (error) {
+    return NextResponse.json({ error: "Failed to load watchlist." }, { status: 500 });
+  }
+
+  return NextResponse.json({ watchlist: data });
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = parseBody(body);

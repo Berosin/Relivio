@@ -5,6 +5,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { ABIS } from "@/contracts/abis";
 import { formatRUSD, parseRUSD, statusLabel } from "@/lib/format";
 import { useTokenApproval } from "@/hooks/useTokenApproval";
+import { CommentSection } from "@/components/CommentSection";
 
 type RequestStruct = {
   requester: `0x${string}`;
@@ -40,6 +41,7 @@ export function RequestCard({
   const { writeContract, data: hash, isPending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
   const [repayAmount, setRepayAmount] = useState("");
+  const [showComments, setShowComments] = useState(false);
   const repayApproval = useTokenApproval(fundAddress, parseRUSD(repayAmount || "0"));
 
   const { data: myShares } = useReadContract({
@@ -196,6 +198,17 @@ export function RequestCard({
             </button>
           )}
         </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => setShowComments((s) => !s)}
+        className="mt-3 text-xs text-neutral-500 hover:text-neutral-300"
+      >
+        {showComments ? "Hide comments" : "Show comments"}
+      </button>
+      {showComments && (
+        <CommentSection targetType="fund_request" targetAddress={fundAddress} targetId={requestId} />
       )}
     </div>
   );

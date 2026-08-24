@@ -9,6 +9,8 @@ import { DonatePanel } from "@/components/campaign/DonatePanel";
 import { MilestoneCard } from "@/components/campaign/MilestoneCard";
 import { AddMilestonePanel } from "@/components/campaign/AddMilestonePanel";
 import { VerifierPanel } from "@/components/campaign/VerifierPanel";
+import { CommentSection } from "@/components/CommentSection";
+import { WatchButton } from "@/components/WatchButton";
 
 
 export default function CampaignDetailPage({
@@ -79,6 +81,9 @@ export default function CampaignDetailPage({
           <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white">Verified</span>
 
         )}
+        <span className="ml-auto">
+          <WatchButton targetType="campaign" targetAddress={address} />
+        </span>
       </div>
       <p className="mt-1 text-sm text-neutral-400">{descriptionStr}</p>
       <p className="mt-1 text-xs text-neutral-400">{address}</p>
@@ -121,6 +126,8 @@ export default function CampaignDetailPage({
           </>
         )}
       </div>
+
+      <CommentSection targetType="campaign" targetAddress={address} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useAccount, useReadContract } from "wagmi";
 import { ABIS } from "@/contracts/abis";
 import { ADDRESSES } from "@/lib/addresses";
 import { formatRUSD } from "@/lib/format";
+import { ProfileEditor } from "@/components/ProfileEditor";
 
 export default function ReputationPage() {
   const { address, isConnected } = useAccount();
@@ -145,6 +146,8 @@ export default function ReputationPage() {
               <TierBox label="Below 50" amount="100 RUSD" active={scoreNum !== undefined && scoreNum < 50} />
             </div>
           </div>
+
+          <ProfileEditor />
         </>
       )}
     </div>
