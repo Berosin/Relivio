@@ -1,13 +1,15 @@
 "use client";
 
 import { use, useState } from "react";
-import { useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { ABIS } from "@/contracts/abis";
 import { StatGrid, treasuryStats } from "@/components/StatGrid";
 import { ContributePanel } from "@/components/fund/ContributePanel";
 import { CreateRequestPanel } from "@/components/fund/CreateRequestPanel";
 import { RequestCard } from "@/components/fund/RequestCard";
 import { WatchButton } from "@/components/WatchButton";
+import { MetadataSection } from "@/components/MetadataSection";
+import { UpdatesFeed } from "@/components/UpdatesFeed";
 
 export default function FundDetailPage({
   params,
@@ -15,12 +17,18 @@ export default function FundDetailPage({
   params: Promise<{ address: `0x${string}` }>;
 }) {
   const { address } = use(params);
+  const { address: connected } = useAccount();
   const [tab, setTab] = useState<"requests" | "contribute" | "request">("requests");
 
   const { data: config } = useReadContract({
     address,
     abi: ABIS.CommunityFund,
     functionName: "config",
+  });
+  const { data: organizer } = useReadContract({
+    address,
+    abi: ABIS.CommunityFund,
+    functionName: "organizer",
   });
   const { data: snapshot, refetch: refetchSnapshot } = useReadContract({
     address,
@@ -36,6 +44,8 @@ export default function FundDetailPage({
   const cfg = config as unknown as string[] | undefined;
   const name = cfg?.[0] ?? "Loading...";
   const description = cfg?.[1] ?? "";
+  const organizerAddr = organizer as `0x${string}` | undefined;
+  const isOrganizer = Boolean(connected && organizerAddr && connected.toLowerCase() === organizerAddr.toLowerCase());
 
   const count = requestsCount ? Number(requestsCount) : 0;
 
@@ -50,9 +60,13 @@ export default function FundDetailPage({
       <p className="mt-1 text-sm text-neutral-400">{description}</p>
       <p className="mt-1 text-xs text-neutral-400">{address}</p>
 
+      <MetadataSection kind="fund" targetAddress={address} isOrganizer={isOrganizer} />
+
       <div className="mt-6">
         <StatGrid stats={treasuryStats(snapshot as unknown as readonly bigint[] | undefined)} />
       </div>
+
+      <UpdatesFeed kind="fund" targetAddress={address} isOrganizer={isOrganizer} />
 
       <div className="mt-8 flex gap-2 border-b border-white/10">
         {(["requests", "contribute", "request"] as const).map((t) => (

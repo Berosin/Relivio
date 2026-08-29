@@ -66,3 +66,61 @@ export function updateProfile(
   };
   return callApi("/api/profile", "POST", walletAddress, "update_profile", payload);
 }
+
+function normalizeStringArray(value: string[] | undefined): string[] {
+  return (value ?? []).filter((v) => v.trim().length > 0).map((v) => v.trim());
+}
+
+/// Off-chain listing content (cover image, gallery, long description,
+/// location, external links) for a fund or campaign. Gated server-side to
+/// the on-chain organizer — see app/api/metadata/route.ts.
+export function upsertMetadata(
+  walletAddress: `0x${string}`,
+  input: {
+    target_type: "fund" | "campaign";
+    target_address: string;
+    cover_image_url?: string | null;
+    long_description?: string | null;
+    location?: string | null;
+    external_links?: string[];
+    gallery_urls?: string[];
+    disaster_date?: string | null;
+  }
+) {
+  // Must match app/api/metadata/route.ts's reconstruction exactly — same
+  // full shape regardless of target_type, so client and server always agree
+  // on the same key set even for fields the target type doesn't use.
+  const normalized = {
+    target_type: input.target_type,
+    target_address: input.target_address,
+    cover_image_url: input.cover_image_url ?? null,
+    long_description: input.long_description ?? null,
+    location: input.location ?? null,
+    external_links: normalizeStringArray(input.external_links),
+    gallery_urls: normalizeStringArray(input.gallery_urls),
+    disaster_date: input.disaster_date ?? null,
+  };
+  return callApi("/api/metadata", "POST", walletAddress, "update_metadata", normalized);
+}
+
+/// Organizer progress post (title/body/photos) for a fund or campaign.
+/// Gated server-side to the on-chain organizer — see app/api/updates/route.ts.
+export function postUpdate(
+  walletAddress: `0x${string}`,
+  input: {
+    target_type: "fund" | "campaign";
+    target_address: string;
+    title: string;
+    body?: string | null;
+    image_urls?: string[];
+  }
+) {
+  const normalized = {
+    target_type: input.target_type,
+    target_address: input.target_address,
+    title: input.title,
+    body: input.body ?? null,
+    image_urls: normalizeStringArray(input.image_urls),
+  };
+  return callApi("/api/updates", "POST", walletAddress, "post_update", normalized);
+}

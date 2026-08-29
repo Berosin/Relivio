@@ -11,6 +11,8 @@ import { AddMilestonePanel } from "@/components/campaign/AddMilestonePanel";
 import { VerifierPanel } from "@/components/campaign/VerifierPanel";
 import { CommentSection } from "@/components/CommentSection";
 import { WatchButton } from "@/components/WatchButton";
+import { MetadataSection } from "@/components/MetadataSection";
+import { UpdatesFeed } from "@/components/UpdatesFeed";
 
 
 export default function CampaignDetailPage({
@@ -90,9 +92,13 @@ export default function CampaignDetailPage({
 
       <VerifierPanel campaignAddress={address} />
 
+      <MetadataSection kind="campaign" targetAddress={address} isOrganizer={isOrganizer} />
+
       <div className="mt-6">
         <StatGrid stats={stats} />
       </div>
+
+      <UpdatesFeed kind="campaign" targetAddress={address} isOrganizer={isOrganizer} />
 
       <div className="mt-8 flex gap-2 border-b border-white/10">
         {(["milestones", "donate"] as const).map((t) => (
