@@ -1,5 +1,7 @@
 "use client";
 
+import { RelivioLogo } from "@/components/RelivioLogo";
+
 function GithubIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -14,12 +16,15 @@ export function SiteFooter() {
   return (
     <footer className="relative border-t border-white/10 bg-black px-6 py-8 text-white sm:px-12">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6">
-        <h2 className="glitch-text select-none font-display text-xl tracking-tight" data-text="RELIVIO">
-          RELIVIO
-        </h2>
+        <div className="flex items-center gap-2">
+          <RelivioLogo />
+          <h2 className="glitch-text select-none font-display text-xl tracking-tight" data-text="RELIVIO">
+            RELIVIO
+          </h2>
+        </div>
 
         <a
-          href="https://github.com"
+          href="https://github.com/Berosin/Relivio.git"
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-2 text-sm text-neutral-300 transition-colors hover:text-white"

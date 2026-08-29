@@ -4,31 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectWallet } from "@/components/ConnectWallet";
 import { NotificationBell } from "@/components/NotificationBell";
-
-function RelivioMark() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-    >
-      <path
-        d="M12 2L4 5v6c0 5 3.4 8.6 8 9 4.6-.4 8-4 8-9V5l-8-3z"
-        stroke="black"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M12 15.5s-3.5-2.2-3.5-4.7a2 2 0 0 1 3.5-1.3 2 2 0 0 1 3.5 1.3c0 2.5-3.5 4.7-3.5 4.7z"
-        fill="black"
-      />
-    </svg>
-  );
-}
+import { RelivioLogo } from "@/components/RelivioLogo";
 
 const NAV_LINKS = [
   { href: "/funds", label: "Emergency Funds" },
@@ -93,11 +69,15 @@ export function SiteHeader() {
 
           <nav className="relative flex items-center justify-between px-6 py-4">
             <Link href="/" className="flex items-center gap-2 text-lg font-display tracking-tight text-black">
-              <RelivioMark />
+              <RelivioLogo size={34} />
               RELIVIO
             </Link>
 
-            <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 text-sm sm:flex">
+            <div
+              className={`absolute left-1/2 -translate-x-1/2 items-center gap-6 text-sm ${
+                scrolled ? "hidden" : "hidden sm:flex"
+              }`}
+            >
               {NAV_LINKS.map((link) => (
                 <Link key={link.href} href={link.href} className="text-neutral-600 hover:text-black transition-colors">
                   {link.label}
@@ -114,7 +94,9 @@ export function SiteHeader() {
                 onClick={() => setMobileOpen((v) => !v)}
                 aria-label="Toggle menu"
                 aria-expanded={mobileOpen}
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-black/15 sm:hidden"
+                className={`flex h-9 w-9 items-center justify-center rounded-md border border-black/15 ${
+                  scrolled ? "" : "sm:hidden"
+                }`}
               >
                 <MenuIcon open={mobileOpen} />
               </button>
@@ -122,7 +104,7 @@ export function SiteHeader() {
           </nav>
 
           {mobileOpen && (
-            <div className="relative border-t border-black/10 px-6 py-4 sm:hidden">
+            <div className={`relative border-t border-black/10 px-6 py-4 ${scrolled ? "" : "sm:hidden"}`}>
               <div className="flex flex-col gap-4">
                 {NAV_LINKS.map((link) => (
                   <Link
@@ -134,7 +116,7 @@ export function SiteHeader() {
                     {link.label}
                   </Link>
                 ))}
-                <div className="flex items-center gap-2 pt-2">
+                <div className="flex items-center gap-2 pt-2 sm:hidden">
                   <NotificationBell />
                   <ConnectWallet />
                 </div>
