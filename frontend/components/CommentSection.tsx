@@ -11,7 +11,20 @@ type Comment = {
   author_address: string;
   body: string;
   created_at: string;
+  // The client has no generated Database types, so supabase-js can't tell
+  // this FK is many-to-one and infers the embed as an array — but
+  // PostgREST's actual runtime behavior for a plain many-to-one FK embed
+  // like this one returns a single object, not an array. Accepting both
+  // shapes here means this doesn't silently break depending on which one
+  // actually comes back over the wire.
+  profiles: { display_name: string | null } | { display_name: string | null }[] | null;
 };
+
+function authorLabel(c: Comment): string {
+  const profile = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
+  const name = profile?.display_name?.trim();
+  return name ? name : shortAddress(c.author_address);
+}
 
 export function CommentSection({
   targetType,
@@ -36,7 +49,7 @@ export function CommentSection({
     }
     let query = supabase
       .from("comments")
-      .select("id, author_address, body, created_at")
+      .select("id, author_address, body, created_at, profiles(display_name)")
       .eq("target_type", targetType)
       .eq("target_address", targetAddress.toLowerCase())
       .order("created_at", { ascending: true });
@@ -84,15 +97,24 @@ export function CommentSection({
         {loaded && comments.length === 0 && (
           <p className="text-xs text-neutral-600">No comments yet — be the first to ask a question.</p>
         )}
-        {comments.map((c) => (
-          <div key={c.id} className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
-            <div className="flex items-center justify-between text-xs text-neutral-500">
-              <span className="font-mono text-neutral-400">{shortAddress(c.author_address)}</span>
-              <span>{new Date(c.created_at).toLocaleString()}</span>
+        {comments.map((c) => {
+          const profile = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
+          const hasName = Boolean(profile?.display_name?.trim());
+          return (
+            <div key={c.id} className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+              <div className="flex items-center justify-between text-xs text-neutral-500">
+                <span
+                  className={hasName ? "text-neutral-300" : "font-mono text-neutral-400"}
+                  title={c.author_address}
+                >
+                  {authorLabel(c)}
+                </span>
+                <span>{new Date(c.created_at).toLocaleString()}</span>
+              </div>
+              <p className="mt-1.5 text-sm text-neutral-200">{c.body}</p>
             </div>
-            <p className="mt-1.5 text-sm text-neutral-200">{c.body}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
