@@ -19,8 +19,9 @@
  *   npm start
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type WebSocketLikeConstructor } from "@supabase/supabase-js";
 import { createPublicClient, http, parseAbi, type Address } from "viem";
+import ws from "ws";
 import "dotenv/config";
 
 const RPC_URL = process.env.RPC_URL ?? "http://127.0.0.1:8545";
@@ -33,7 +34,15 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error("Missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY in backend/indexer/.env");
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+// This indexer never subscribes to Supabase Realtime (it only does plain
+// REST insert/select/update calls) — but createClient() unconditionally
+// constructs a RealtimeClient internally regardless, and that constructor
+// throws immediately on Node < 22, which lacks a native WebSocket global.
+// Passing the `ws` package as the transport sidesteps that entirely; it's
+// never actually opened since nothing here calls .channel()/.on().
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  realtime: { transport: ws as unknown as WebSocketLikeConstructor },
+});
 const client = createPublicClient({ transport: http(RPC_URL) });
 
 const fundFactoryAbi = parseAbi(["event FundCreated(address indexed fund, address indexed organizer, address yieldAdapter, string name)"]);
