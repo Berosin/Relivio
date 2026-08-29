@@ -86,7 +86,7 @@ export default function CreateFundPage() {
       <SpatialCard className="p-8 sm:p-10">
         <h1 className="text-2xl font-bold text-neutral-900">Create Community Emergency Fund</h1>
         <p className="mt-1 text-sm text-neutral-500">
-          Deploys a new smart-contract-controlled treasury (Core Use Case 1).
+          Deploys a new smart-contract-controlled treasury.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">

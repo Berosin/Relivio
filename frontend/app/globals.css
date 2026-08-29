@@ -150,7 +150,11 @@ body {
 }
 
 .spatial-card {
-  background: #ffffff;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)),
+    url("/textures/crumpled-fabric.webp");
+  background-size: cover;
+  background-position: center;
   border-radius: 1.5rem;
   transform-style: preserve-3d;
   transition: transform 0.15s ease-out, box-shadow 0.3s ease;

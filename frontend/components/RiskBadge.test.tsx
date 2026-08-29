@@ -39,12 +39,31 @@ describe("RiskBadge", () => {
   });
 
   it.each([
-    ["LOW", "bg-white/5"],
-    ["MEDIUM", "bg-amber-500/10"],
-    ["HIGH", "bg-red-500/10"],
-  ] as const)("applies the correct color class for %s risk level", (level, expectedClassFragment) => {
+    ["LOW", "border-white/15"],
+    ["MEDIUM", "border-white/40"],
+    ["HIGH", "border-red-500/50"],
+  ] as const)("applies the correct border class for %s risk level", (level, expectedClassFragment) => {
     const { container } = render(<RiskBadge assessment={makeAssessment({ risk_level: level })} />);
     const badge = container.firstElementChild;
     expect(badge?.className).toContain(expectedClassFragment);
+  });
+
+  it("is always rendered with an opaque black background, regardless of risk level", () => {
+    // Regression test: RiskBadge is placed on both dark .card panels and
+    // light, textured SpatialCard forms. A translucent background would
+    // read fine on one and be unreadable on the other — it must stay
+    // opaque so it's legible no matter what it's placed on top of.
+    for (const level of ["LOW", "MEDIUM", "HIGH"] as const) {
+      const { container } = render(<RiskBadge assessment={makeAssessment({ risk_level: level })} />);
+      const badge = container.firstElementChild;
+      expect(badge?.className).toContain("bg-black");
+    }
+  });
+
+  it("never uses an amber/yellow color, staying inside the site's monochrome + red palette", () => {
+    for (const level of ["LOW", "MEDIUM", "HIGH"] as const) {
+      const { container } = render(<RiskBadge assessment={makeAssessment({ risk_level: level })} />);
+      expect(container.innerHTML).not.toMatch(/amber|yellow/i);
+    }
   });
 });

@@ -130,7 +130,7 @@ export default function CreateCampaignPage() {
       <SpatialCard className="p-8 sm:p-10">
         <h1 className="text-2xl font-bold text-neutral-900">Create Relief Campaign</h1>
         <p className="mt-1 text-sm text-neutral-500">
-          Public campaign for disaster or community relief (Core Use Case 2). Verification is
+          Public campaign for disaster or community relief. Verification is
           performed separately by the platform verifier.
         </p>
 
