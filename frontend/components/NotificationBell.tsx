@@ -91,9 +91,18 @@ export function NotificationBell() {
         onClick={() => setOpen((v) => !v)}
         aria-label={unreadCount > 0 ? `${unreadCount} unread notifications` : "Notifications"}
         aria-expanded={open}
-        className="relative flex h-9 w-9 items-center justify-center rounded-md border border-black/15 transition-colors hover:bg-black/5"
+        className="btn-shine relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-black bg-white text-black transition-colors hover:bg-black hover:text-white"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
