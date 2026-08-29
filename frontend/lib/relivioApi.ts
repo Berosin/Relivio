@@ -50,5 +50,19 @@ export function updateProfile(
   walletAddress: `0x${string}`,
   input: { display_name?: string; avatar_url?: string; bio?: string }
 ) {
-  return callApi("/api/profile", "POST", walletAddress, "update_profile", input);
+  // Must match app/api/profile/route.ts's reconstruction exactly, key-for-key
+  // and value-for-value — that's what the signature is over. JSON.stringify
+  // silently drops keys whose value is `undefined`, so if this object only
+  // included the fields the caller happened to pass, the signed message
+  // would omit them while the server (which always fills all three keys,
+  // defaulting to null) would not — a mismatched message, and therefore a
+  // signature that always fails verification even though nothing was
+  // tampered with. Normalizing to `null` here, matching the server's own
+  // `?? null`, keeps both sides byte-for-byte identical.
+  const payload = {
+    display_name: input.display_name ?? null,
+    avatar_url: input.avatar_url ?? null,
+    bio: input.bio ?? null,
+  };
+  return callApi("/api/profile", "POST", walletAddress, "update_profile", payload);
 }
