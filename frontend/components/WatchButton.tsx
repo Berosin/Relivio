@@ -61,6 +61,10 @@ export function WatchButton({
     }
   }
 
+  // Same bordered, color-inverting pattern as ConnectWallet's button — white
+  // pill with a shine sweep for the actionable "not yet watching" state,
+  // inverted to a filled black pill (no shine — it's now a status, not a
+  // call to action) once the wallet is watching.
   if (!checked) return null;
 
   return (
@@ -69,11 +73,11 @@ export function WatchButton({
       onClick={toggle}
       disabled={!isConnected || loading}
       title={!isConnected ? "Connect your wallet to watch this" : undefined}
-      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 ${
+      className={
         watching
-          ? "border-white bg-white/10 text-white"
-          : "border-white/20 text-neutral-300 hover:border-white/40"
-      }`}
+          ? "rounded-full border-2 border-white bg-black px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
+          : "btn-shine rounded-full border-2 border-white bg-white px-3 py-1 text-xs font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+      }
     >
       {watching ? "★ Watching" : "☆ Watch"}
     </button>

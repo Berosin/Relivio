@@ -203,7 +203,7 @@ export function RequestCard({
       <button
         type="button"
         onClick={() => setShowComments((s) => !s)}
-        className="mt-3 text-xs text-neutral-500 hover:text-neutral-300"
+        className="mt-3 text-xs font-medium text-neutral-500 underline decoration-dotted underline-offset-4 transition-colors hover:text-white"
       >
         {showComments ? "Hide comments" : "Show comments"}
       </button>

@@ -74,29 +74,30 @@ export function CommentSection({
   }
 
   return (
-    <div className="mt-6">
-      <p className="text-xs font-semibold uppercase tracking-widest text-neutral-400">
-        Comments {comments.length > 0 && `(${comments.length})`}
+    <div className="card mt-6">
+      <h3 className="font-semibold">Comments{comments.length > 0 && ` (${comments.length})`}</h3>
+      <p className="mt-1 text-xs text-neutral-500">
+        Public, wallet-signed. Ask questions or add context before voting.
       </p>
 
-      <div className="mt-3 space-y-3">
+      <div className="mt-4 space-y-3">
         {loaded && comments.length === 0 && (
-          <p className="text-sm text-neutral-500">No comments yet.</p>
+          <p className="text-xs text-neutral-600">No comments yet — be the first to ask a question.</p>
         )}
         {comments.map((c) => (
-          <div key={c.id} className="rounded-lg border border-white/10 p-3">
+          <div key={c.id} className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
             <div className="flex items-center justify-between text-xs text-neutral-500">
-              <span className="font-mono">{shortAddress(c.author_address)}</span>
+              <span className="font-mono text-neutral-400">{shortAddress(c.author_address)}</span>
               <span>{new Date(c.created_at).toLocaleString()}</span>
             </div>
-            <p className="mt-1 text-sm text-neutral-200">{c.body}</p>
+            <p className="mt-1.5 text-sm text-neutral-200">{c.body}</p>
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-4">
+      <form onSubmit={handleSubmit} className="mt-4 space-y-3">
         <textarea
-          className="input-light w-full"
+          className="input"
           rows={2}
           maxLength={2000}
           placeholder={isConnected ? "Add a comment..." : "Connect your wallet to comment"}
@@ -104,15 +105,15 @@ export function CommentSection({
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
         />
-        <div className="mt-2 flex items-center justify-between">
-          {error && <p className="text-xs text-red-400">{error}</p>}
+        <div className="flex items-center gap-3">
           <button
             type="submit"
             disabled={!isConnected || posting || !draft.trim()}
-            className="ml-auto rounded-lg border border-white/20 px-3 py-1.5 text-xs font-medium text-white hover:border-white/40 disabled:opacity-40"
+            className="btn-shine btn-primary"
           >
-            {posting ? "Posting..." : "Post Comment"}
+            {posting ? "Signing & posting..." : "Post Comment"}
           </button>
+          {error && <p role="alert" className="text-xs text-red-400">{error}</p>}
         </div>
       </form>
     </div>
