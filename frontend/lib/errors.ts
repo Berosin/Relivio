@@ -18,6 +18,16 @@ export function getFriendlyErrorMessage(error: unknown): string {
     return "You don't have enough ETH in your wallet to pay the network fee for this transaction.";
   }
 
+  // These are RPC-provider-level rejections (Infura/Alchemy rate limits,
+  // stuck nonces) that happen BEFORE a transaction is ever broadcast — the
+  // contract's logic never actually ran. viem still wraps them in
+  // "reverted with the following reason: ..." phrasing though, which reads
+  // exactly like a real on-chain revert and is genuinely misleading, so
+  // this has to be caught before the generic revert-reason extraction below.
+  if (/in-flight transaction limit|too many pending transactions|nonce too low|replacement transaction underpriced/i.test(raw)) {
+    return "Your wallet has too many pending transactions. Check MetaMask's Activity tab, speed up or cancel any stuck ones, then try again.";
+  }
+
   const revertMatch = raw.match(/reverted with reason string '([^']+)'/i) || raw.match(/execution reverted:?\s*"?([^"\n]+)"?/i);
   if (revertMatch && revertMatch[1]) {
     return revertMatch[1].trim();

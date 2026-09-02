@@ -24,6 +24,20 @@ describe("getFriendlyErrorMessage", () => {
     );
   });
 
+  it("detects an RPC-provider in-flight transaction limit rather than treating it as a real contract revert", () => {
+    // Real-world case: Infura's free-tier RPC rejects the send when too
+    // many transactions are already pending on the wallet — the contract
+    // never actually runs, but viem's own wrapping makes it read exactly
+    // like a genuine on-chain revert if left unhandled.
+    const error = {
+      shortMessage:
+        'The contract function "addMilestone" reverted with the following reason: RPC 0xaa36a7 Infura eth_sendRawTransaction: in-flight transaction limit reached for delegator.',
+    };
+    expect(getFriendlyErrorMessage(error)).toBe(
+      "Your wallet has too many pending transactions. Check MetaMask's Activity tab, speed up or cancel any stuck ones, then try again."
+    );
+  });
+
   it("extracts our own contract's require() reason from a 'reverted with reason string' message", () => {
     const error = {
       shortMessage:
