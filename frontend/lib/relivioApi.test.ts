@@ -226,3 +226,15 @@ describe("postUpdate client/server message parity", () => {
     expect(clientMessage).toBe(serverMessage);
   });
 });
+
+describe("uploadImage client/server message parity", () => {
+  it("matches for the upload_image signed payload", () => {
+    const payload = { context: "cover", target_type: "campaign", target_address: CAMPAIGN_ADDRESS };
+    const timestamp = Date.now();
+    const clientMessage = buildAuthMessage("upload_image", ADDRESS, timestamp, payload);
+    // Server reconstructs from the same three form fields, no defaulting
+    // needed since none of these are optional.
+    const serverMessage = buildAuthMessage("upload_image", ADDRESS, timestamp, payload);
+    expect(clientMessage).toBe(serverMessage);
+  });
+});

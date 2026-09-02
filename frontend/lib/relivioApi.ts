@@ -67,6 +67,41 @@ export function updateProfile(
   return callApi("/api/profile", "POST", walletAddress, "update_profile", payload);
 }
 
+export type UploadContext = "cover" | "gallery" | "update";
+
+/// Uploads an image to Supabase Storage via /api/upload, gated server-side
+/// to the fund/campaign's on-chain organizer. Returns the public URL.
+/// Doesn't use callApi() since this carries a real file as multipart
+/// form-data rather than a JSON body.
+export async function uploadImage(
+  walletAddress: `0x${string}`,
+  input: {
+    context: UploadContext;
+    target_type: "fund" | "campaign";
+    target_address: string;
+    file: File;
+  }
+): Promise<string> {
+  const payload = { context: input.context, target_type: input.target_type, target_address: input.target_address };
+  const { timestamp, signature } = await signWalletAction("upload_image", walletAddress, payload);
+
+  const form = new FormData();
+  form.set("walletAddress", walletAddress);
+  form.set("timestamp", String(timestamp));
+  form.set("signature", signature);
+  form.set("context", input.context);
+  form.set("target_type", input.target_type);
+  form.set("target_address", input.target_address);
+  form.set("file", input.file);
+
+  const res = await fetch("/api/upload", { method: "POST", body: form });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error((data as { error?: string }).error || "Upload failed.");
+  }
+  return (data as { url: string }).url;
+}
+
 function normalizeStringArray(value: string[] | undefined): string[] {
   return (value ?? []).filter((v) => v.trim().length > 0).map((v) => v.trim());
 }

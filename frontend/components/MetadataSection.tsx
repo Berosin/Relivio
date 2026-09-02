@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { supabase } from "@/lib/supabase";
 import { upsertMetadata } from "@/lib/relivioApi";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 type Metadata = {
   cover_image_url: string | null;
@@ -19,7 +20,7 @@ const EMPTY_FORM = {
   long_description: "",
   location: "",
   external_links: "",
-  gallery_urls: "",
+  gallery_urls: [] as string[],
   disaster_date: "",
 };
 
@@ -56,7 +57,7 @@ export function MetadataSection({
       long_description: row?.long_description ?? "",
       location: row?.location ?? "",
       external_links: (row?.external_links ?? []).join("\n"),
-      gallery_urls: (row?.gallery_urls ?? []).join("\n"),
+      gallery_urls: row?.gallery_urls ?? [],
       disaster_date: row?.disaster_date ?? "",
     });
     setLoaded(true);
@@ -80,7 +81,7 @@ export function MetadataSection({
         long_description: form.long_description || null,
         location: form.location || null,
         external_links: form.external_links.split("\n"),
-        gallery_urls: form.gallery_urls.split("\n"),
+        gallery_urls: form.gallery_urls,
         disaster_date: kind === "campaign" ? form.disaster_date || null : null,
       });
       await load();
@@ -169,12 +170,15 @@ export function MetadataSection({
       )}
 
       {editing && (
-        <form onSubmit={handleSave} className="mt-4 space-y-3">
-          <input
-            className="input"
-            placeholder="Cover image URL"
-            value={form.cover_image_url}
-            onChange={(e) => setForm((f) => ({ ...f, cover_image_url: e.target.value }))}
+        <form onSubmit={handleSave} className="mt-4 space-y-4">
+          <ImageUploadField
+            context="cover"
+            targetType={kind}
+            targetAddress={targetAddress}
+            multiple={false}
+            value={form.cover_image_url ? [form.cover_image_url] : []}
+            onChange={(urls) => setForm((f) => ({ ...f, cover_image_url: urls[0] ?? "" }))}
+            label="Cover image"
           />
           <textarea
             className="input"
@@ -198,12 +202,14 @@ export function MetadataSection({
                 value={form.disaster_date}
                 onChange={(e) => setForm((f) => ({ ...f, disaster_date: e.target.value }))}
               />
-              <textarea
-                className="input"
-                rows={3}
-                placeholder="Gallery image URLs, one per line"
+              <ImageUploadField
+                context="gallery"
+                targetType={kind}
+                targetAddress={targetAddress}
+                multiple={true}
                 value={form.gallery_urls}
-                onChange={(e) => setForm((f) => ({ ...f, gallery_urls: e.target.value }))}
+                onChange={(urls) => setForm((f) => ({ ...f, gallery_urls: urls }))}
+                label="Gallery"
               />
             </>
           )}

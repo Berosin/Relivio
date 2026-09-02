@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { supabase } from "@/lib/supabase";
 import { postUpdate } from "@/lib/relivioApi";
 import { shortAddress } from "@/lib/format";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 type Update = {
   id: string;
@@ -30,7 +31,7 @@ export function UpdatesFeed({
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [imageUrls, setImageUrls] = useState("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,11 +66,11 @@ export function UpdatesFeed({
         target_address: targetAddress,
         title: title.trim(),
         body: body.trim() || null,
-        image_urls: imageUrls.split("\n"),
+        image_urls: imageUrls,
       });
       setTitle("");
       setBody("");
-      setImageUrls("");
+      setImageUrls([]);
       setShowForm(false);
       await load();
     } catch (err) {
@@ -115,12 +116,14 @@ export function UpdatesFeed({
             value={body}
             onChange={(e) => setBody(e.target.value)}
           />
-          <textarea
-            className="input"
-            rows={2}
-            placeholder="Photo URLs, one per line (optional)"
+          <ImageUploadField
+            context="update"
+            targetType={kind}
+            targetAddress={targetAddress}
+            multiple={true}
             value={imageUrls}
-            onChange={(e) => setImageUrls(e.target.value)}
+            onChange={setImageUrls}
+            label="Photos (optional)"
           />
           <div className="flex items-center gap-3">
             <button type="submit" disabled={posting || !title.trim()} className="btn-shine btn-primary">
