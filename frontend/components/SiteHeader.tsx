@@ -7,6 +7,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { RelivioLogo } from "@/components/RelivioLogo";
 
 const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/funds", label: "Emergency Funds" },
   { href: "/campaigns", label: "Relief Campaigns" },
   { href: "/analytics", label: "Analytics" },
