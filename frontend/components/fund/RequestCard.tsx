@@ -124,7 +124,7 @@ export function RequestCard({
                     args: [BigInt(requestId), true],
                   })
                 }
-                className="flex-1 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-black hover:bg-emerald-400 disabled:opacity-50"
+                className="btn-shine flex-1 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-black hover:bg-emerald-400 disabled:opacity-50"
               >
                 Vote YES
               </button>
@@ -138,7 +138,7 @@ export function RequestCard({
                     args: [BigInt(requestId), false],
                   })
                 }
-                className="flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+                className="btn-shine flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
               >
                 Vote NO
               </button>
@@ -158,7 +158,7 @@ export function RequestCard({
               args: [BigInt(requestId)],
             })
           }
-          className="btn-primary mt-3 w-full"
+          className="btn-shine btn-primary mt-3 w-full"
         >
           Finalize Request
         </button>
@@ -177,7 +177,7 @@ export function RequestCard({
             <button
               disabled={!isConnected || repayApproval.isPending || repayApproval.isConfirming}
               onClick={repayApproval.approve}
-              className="btn-primary whitespace-nowrap"
+              className="btn-shine btn-primary whitespace-nowrap"
             >
               Approve
             </button>
@@ -192,7 +192,7 @@ export function RequestCard({
                   args: [BigInt(requestId), parseRUSD(repayAmount)],
                 })
               }
-              className="btn-primary"
+              className="btn-shine btn-primary"
             >
               Repay
             </button>

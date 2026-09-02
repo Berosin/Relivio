@@ -172,7 +172,7 @@ export function MilestoneCard({
                 args: [BigInt(milestoneId)],
               })
             }
-            className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+            className="btn-shine mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
           >
             Propose Release
           </button>
@@ -197,7 +197,7 @@ export function MilestoneCard({
                     args: [BigInt(milestoneId), true],
                   })
                 }
-                className="flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+                className="btn-shine flex-1 rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
               >
                 Vote YES
               </button>
@@ -211,7 +211,7 @@ export function MilestoneCard({
                     args: [BigInt(milestoneId), false],
                   })
                 }
-                className="flex-1 rounded-lg border-2 border-white px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
+                className="btn-shine flex-1 rounded-lg border-2 border-white px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black disabled:opacity-40"
               >
                 Vote NO
               </button>
@@ -231,7 +231,7 @@ export function MilestoneCard({
               args: [BigInt(milestoneId)],
             })
           }
-          className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+          className="btn-shine mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
         >
           Finalize Milestone
         </button>

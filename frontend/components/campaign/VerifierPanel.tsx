@@ -48,7 +48,7 @@ export function VerifierPanel({ campaignAddress }: { campaignAddress: `0x${strin
           })
         }
         disabled={isPending || isConfirming}
-        className="mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+        className="btn-shine mt-3 w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
       >
         {isPending
           ? "Confirm in wallet..."

@@ -49,7 +49,7 @@ useEffect(() => {
               args: [description, parseRUSD(amount)],
             })
           }
-          className="w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
+          className="btn-shine w-full rounded-lg border-2 border-white bg-white px-3 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
         >
           Add Milestone
         </button>

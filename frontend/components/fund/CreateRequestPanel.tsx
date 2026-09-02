@@ -142,7 +142,7 @@ export function CreateRequestPanel({
         <button
           onClick={submit}
           disabled={!isConnected || isPending || isConfirming}
-          className="btn-primary w-full"
+          className="btn-shine btn-primary w-full"
         >
           {isPending ? "Confirm in wallet..." : isConfirming ? "Submitting..." : "Submit Request"}
         </button>

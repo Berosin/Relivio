@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { BackButton } from "@/components/BackButton";
 
 export const metadata: Metadata = {
-  title: "Relivio — Turning Community Liquidity into Crisis Relief",
+  title: "Relivio",
   description:
     "Relivio is a decentralized financial infrastructure platform for transparent, community-governed emergency assistance and disaster relief. Hackathon/testnet prototype.",
 };

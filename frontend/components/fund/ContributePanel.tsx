@@ -55,7 +55,7 @@ export function ContributePanel({
         <button
           onClick={approval.approve}
           disabled={!isConnected || approval.isPending || approval.isConfirming}
-          className="btn-primary mt-3 w-full"
+          className="btn-shine btn-primary mt-3 w-full"
         >
           {approval.isPending || approval.isConfirming ? "Approving..." : "1. Approve RUSD"}
         </button>
@@ -63,7 +63,7 @@ export function ContributePanel({
         <button
           onClick={contribute}
           disabled={!isConnected || isPending || isConfirming}
-          className="btn-primary mt-3 w-full"
+          className="btn-shine btn-primary mt-3 w-full"
         >
           {isPending ? "Confirm in wallet..." : isConfirming ? "Contributing..." : "2. Contribute"}
         </button>
