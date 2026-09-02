@@ -130,7 +130,11 @@ export function SiteHeader() {
 
       <style jsx>{`
         .glass-nav {
-          background: rgba(255, 255, 255, 0.92);
+          background:
+            linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)),
+            url("/textures/crumpled-fabric.webp");
+          background-size: cover;
+          background-position: center;
           -webkit-backdrop-filter: blur(24px) saturate(180%);
           backdrop-filter: blur(24px) saturate(180%);
           border: 1px solid rgba(0, 0, 0, 0.08);
