@@ -43,7 +43,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten to the deployed frontend origin in production
+    allow_origins=["https://relivio.vercel.app"],  # tighten to the deployed frontend origin in production
     allow_methods=["*"],
     allow_headers=["*"],
 )
