@@ -11,6 +11,16 @@
  * ever reads events and writes advisory rows. If it's down, funds keep
  * working exactly as before; only the notification feed goes stale.
  *
+ * Also runs a minimal HTTP health-check server (GET / -> 200 OK). This
+ * exists purely so this process can be deployed as a Render free-tier
+ * WEB SERVICE instead of a Background Worker — Render's free tier has
+ * no background-worker option, only web services (which need something
+ * to answer HTTP requests). Paired with an external uptime pinger
+ * (UptimeRobot / cron-job.org) hitting this endpoint every ~10 minutes,
+ * that keeps the process from spinning down on inactivity. The health
+ * server has nothing to do with the indexer's actual job — it's just
+ * what makes the free tier applicable here.
+ *
  * Run:
  *   cd backend/indexer
  *   npm install
@@ -21,6 +31,7 @@
 
 import { createClient, type WebSocketLikeConstructor } from "@supabase/supabase-js";
 import { createPublicClient, http, parseAbi, type Address } from "viem";
+import { createServer } from "node:http";
 import ws from "ws";
 import "dotenv/config";
 
@@ -169,6 +180,27 @@ function watchCampaign(campaignAddress: Address) {
   });
 }
 
+const PORT = Number(process.env.PORT ?? 3001);
+const startedAt = new Date();
+
+function startHealthServer() {
+  const server = createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        status: "ok",
+        service: "relivio-indexer",
+        uptimeSeconds: Math.floor((Date.now() - startedAt.getTime()) / 1000),
+        watchedFunds: watchedFunds.size,
+        watchedCampaigns: watchedCampaigns.size,
+      })
+    );
+  });
+  server.listen(PORT, () => {
+    console.log(`[indexer] health server listening on port ${PORT}`);
+  });
+}
+
 async function main() {
   console.log("[indexer] starting, RPC:", RPC_URL);
 
@@ -192,6 +224,8 @@ async function main() {
 
   console.log("[indexer] running. Ctrl+C to stop.");
 }
+
+startHealthServer();
 
 main().catch((err) => {
   console.error("[indexer] fatal error", err);
